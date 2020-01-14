@@ -1,37 +1,39 @@
 # CRSSANT: Cross-linked RNA Secondary Structure Analysis using Network Techniques
-RNA crosslinking, proximity ligation and high throughput sequencing produces non-continuous reads that indicate base pairing and higher order interactions, either in RNA secondary structures or intermolecular complexes. CRSSANT (pronounced 'croissant') is a computational pipeline for analyzing non-continuous/gapped reads from a variety of methods that employ the crosslink-ligation principle, including [PARIS](https://www.ncbi.nlm.nih.gov/pubmed/27180905), [LIGR](https://www.ncbi.nlm.nih.gov/pubmed/27184080), [SPLASH](https://www.ncbi.nlm.nih.gov/pubmed/27184079), COMRADES (https://www.ncbi.nlm.nih.gov/pubmed/30202058), hiCLIP (https://www.ncbi.nlm.nih.gov/pubmed/25799984), etc. CRSSANT optimizes short-read mapping, automates alignment processing, and clusters alignments into duplex groups (DG) and non-overlapping groups (NG).
+RNA crosslinking, proximity ligation and high throughput sequencing produces non-continuous reads that indicate base pairing and higher order interactions, either in RNA secondary structures or intermolecular complexes. CRSSANT (pronounced 'croissant') is a computational pipeline for analyzing non-continuous/gapped reads from a variety of methods that employ the crosslink-ligation principle, including [PARIS](https://www.ncbi.nlm.nih.gov/pubmed/27180905), [LIGR](https://www.ncbi.nlm.nih.gov/pubmed/27184080), [SPLASH](https://www.ncbi.nlm.nih.gov/pubmed/27184079), [COMRADES](https://www.ncbi.nlm.nih.gov/pubmed/30202058), [hiCLIP](https://www.ncbi.nlm.nih.gov/pubmed/25799984), etc. CRSSANT optimizes short-read mapping, automates alignment processing, and clusters alignments into duplex groups (DG) and non-overlapping groups (NG).
 
 Briefly, the CRSSANT pipeline operates as follows. First, sequencing reads that have been processed to remove adapters are mapped references with STAR and a new set of optimized options. Second, alignments are filtered, rearranged and classified into different types (gaptypes.py and gapfilter.py). Third, we use network analysis methods to cluster non-continuous alignments into DGs and calculate the confidence for each DG.
 
-CRSSANT is written in Python and available as source code that you can download and run on yuor own machine. An earlier version of the DG assembly method is available here: CRSSANT (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Fischer-Hwang et al.](LINKLINKLINK).
+CRSSANT is written in Python and available as source code that you can download and run on yuor own machine. An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Fischer-Hwang et al.](LINKLINKLINK).
+
+
 
 ## Contents
-* [Download](https://github.com/zhipenglu/CRSSANT#download)
+* [Download and install](https://github.com/zhipenglu/CRSSANT#Download-and-install)
 * [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#map)
 * [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#classify)
 * [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#filter)
 * [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#cluster)
+* [Tests](https://github.com/zhipenglu/CRSSANT#Tests)
 
-    * [Specify pipeline parameters](https://github.com/zhipenglu/CRSSANT#specify-pipeline-parameters)
-        * [Output folder](https://github.com/zhipenglu/CRSSANT#output-folder)
-        * [Chimeric reads file](https://github.com/zhipenglu/CRSSANT#chimeric-reads-file)
-        * [Genes for analysis](https://github.com/zhipenglu/CRSSANT#Genes-for-analysis)
-        * [Clustering method](https://github.com/zhipenglu/CRSSANT#clustering-method)
-        * [Number of threads](https://github.com/zhipenglu/CRSSANT#Number-of-threads)        
-* [Outputs](https://github.com/zhipenglu/CRSSANT#outputs)
-* [Misc](https://github.com/zhipenglu/CRSSANT#misc)
-    * [Creating a reference.bed file](https://github.com/zhipenglu/CRSSANT#creating-a-referencebed-file)
-    * [Help](https://github.com/zhipenglu/CRSSANT#help)
-* [Test](https://github.com/zhipenglu/CRSSANT#test)
-
-## Download
+## Download and install
 Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location, e.g. `CRSSANT_path`. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager (follow instructions in links in parentheses):
-* [ViennaRNA v2.4.7+](https://www.tbi.univie.ac.at/RNA/) ([Anaconda Cloud link](https://anaconda.org/bioconda/viennarna))
-* [ushuffle v1.2.2+](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-192) ([Anaconda Cloud link](https://anaconda.org/bioconda/ushuffle))
+
+No special installation is needed, but the dependencies need to be resolved before use. Currently, the NetworkX. Python dependencies are as follows: 
+Numpy, SciPy, etc., which are included in Anaconda python 3.6+ NetworkX has not been updated to be compatible with higher python versions. 
+* [STAR v2.7.1+](https://github.com/alexdobin/STAR)
+
 * [NetworkX v2.1+](https://networkx.github.io/) ([Anaconda Cloud link](https://anaconda.org/anaconda/networkx))
+
+Additional tools for used for general processing of high throughput sequencing data, including samtools, bedtools, 
+
 * [NumPy](http://www.numpy.org/) ([Anaconda Cloud link](https://anaconda.org/anaconda/numpy))
 * [scikit-learn](http://scikit-learn.org/stable/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scikit-learn))
 * [SciPy](https://www.scipy.org/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scipy))
+
+
+
+
+
 
 
 
