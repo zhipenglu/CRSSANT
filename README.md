@@ -47,11 +47,8 @@ STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/read
 
 Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
 
-
-
 ## Step 2: Classify alignments
 In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into 5 distinct types using `gaptypes.py`. 
-
 ```
 python gaptypes.py input.sam output_prefix glenlog nprocs
 ```
@@ -61,23 +58,22 @@ Recommended parameters are as follows.
 * `minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
 * `nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
 
-
 Successful completion of this step results in 7 files: 
-`cont.sam`: continuous alignments
-
-`gap1.sam`: non-continuous alignments, each has 1 gap
-
-`gapm.sam`: non-continuous alignments, each has more than 1 gaps
-
-`trans.sam`: non-continuous alignments with the 2 arms on different strands or chromosomes
-
-`homo.sam`: non-continuous alignments with the 2 arms overlapping each other
-
-`bad.sam`: non-continuous alignments with complex combinations of indels and gaps 
-
-`log.out`: log file for the run, including input/output alignment counts
+* `cont.sam`: continuous alignments
+* `gap1.sam`: non-continuous alignments, each has 1 gap
+* `gapm.sam`: non-continuous alignments, each has more than 1 gaps
+* `trans.sam`: non-continuous alignments with the 2 arms on different strands or chromosomes
+* `homo.sam`: non-continuous alignments with the 2 arms overlapping each other
+* `bad.sam`: non-continuous alignments with complex combinations of indels and gaps 
+* `log.out`: log file for the run, including input/output alignment counts
 
 
+## Step 3: Filter spliced and short gaps
+Output files `gap1.sam` and `gapm.sam` may contain alignments that have only splicing junctions and short 1-2 nt gaps due to artifacts. These are filtered out using `gapfilter.py` before further processing. Splicing junctions and short gaps in other output files can be safely ignored. The `annotation` file containing the splicing junctions should be in GTF format. `idloc`, location of the transcript_ID field, is usually field 11. `short` is set to either `yes` which means 'remove short 1-2nt gaps', or `no`, which means 'ignore short 1-2nt gaps'.  
+```
+Usage: python gapfilter.py annotation insam outsam idloc short
+```
+The output from `gap1.sam`, typically named `gap1filter.sam`, only contains alignments that pass the filter. The output from `gapm.sam`, typically named gapmfilter.sam, contain alignments with either 1 or more gaps that pass the filter. 
 
 
 
