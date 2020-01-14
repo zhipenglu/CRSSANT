@@ -33,6 +33,12 @@ Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases),
 * [scikit-learn](http://scikit-learn.org/stable/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scikit-learn))
 * [SciPy](https://www.scipy.org/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scipy))
 
+
+
+
+
+
+
 ## Step 1: Map reads to the genome
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
@@ -40,7 +46,38 @@ It is assumed that the reads have been demultiplexed and adapters removed. Befor
 STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
 ```
 
-Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The file `Aligned.sortedByCoord.out.bam` is converted to SAM format for the next step of processing. 
+Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
+
+
+
+## Step 2: Classify alignments
+In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into 5 distinct types using `gaptypes.py`. 
+
+```
+python gaptypes.py input.sam output_prefix glenlog nprocs
+```
+
+Recommended parameters are as follows. 
+
+`glenlog`: -1. Scaling factor for gap extension penalty, equivalent to `scoreGenomicLengthLog2scale` in STAR 
+`minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
+`nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
+
+Successful completion of this step results in 7 files: 
+`cont.sam`: continuous alignments
+`gap1.sam`: non-continuous alignments, each has 1 gap
+`gapm.sam`: non-continuous alignments, each has more than 1 gaps
+`trans.sam`: non-continuous alignments with the 2 arms on different strands or chromosomes
+`homo.sam`: non-continuous alignments with the 2 arms overlapping each other
+`bad.sam`: non-continuous alignments with complex combinations of indels and gaps 
+`log.out`: log file for the run, including input/output alignment counts
+
+
+
+
+
+
+
 
 
 ## Run
