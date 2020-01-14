@@ -7,6 +7,7 @@ CRSSANT is written in Python and available as source code that you can download 
 
 ## Table of contents
 * [Download and install](https://github.com/zhipenglu/CRSSANT#download-and-install)
+* [System requirements and tests](https://github.com/zhipenglu/CRSSANT#system-requirements-and-tests)
 * [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-1-map-reads-to-the-genome)
 * [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-2-classify-alignments)
 * [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-3-filter-spliced-and-short-gaps)
@@ -16,7 +17,7 @@ CRSSANT is written in Python and available as source code that you can download 
 ## Download and prepare environment
 Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
 
-* [NetworkX v2.1+](https://networkx.github.io/) ([Anaconda Cloud link](https://anaconda.org/anaconda/networkx))
+* [NetworkX v2.1+](https://networkx.github.io/) ([Anaconda link](https://anaconda.org/anaconda/networkx))
 * [NumPy](http://www.numpy.org/) ([Anaconda link](https://anaconda.org/anaconda/numpy))
 * [SciPy](https://www.scipy.org/) ([Anaconda link](https://anaconda.org/anaconda/scipy))
 * [scikit-learn](http://scikit-learn.org/) ([Anaconda link](https://anaconda.org/anaconda/scikit-learn))
@@ -29,6 +30,13 @@ Additional tools for used for mapping and general processing of high throughput 
 For visualization of the results, we recommend IGV, which has features for grouping alignments based on tags, such as DG and NG that we implemented here. IGV can also directly visualize DG summary information and RNA secondary structures, see [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups) for details. VARNA is recommended for visualizing RNA secondary structures in a variety of formats, including 
 * [IGV v2.4+](https://software.broadinstitute.org/software/igv/)
 * [VARNA v1.0+](http://varna.lri.fr/)
+
+
+## System requirements and tests
+
+The programs are generally run in x86-64 compatible processors, including 64 bit Linux or Mac OS X, if there is enough memory. Read mapping against mammalian genomes using STAR requires at least 30G memory. Alignment classification typically requires 100G memory. As a result, these two steps should be run in a cluster with large memory. 
+
+Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance.
 
 
 
@@ -104,7 +112,7 @@ Optional arguments:
 ### Required input files
 Alignment files `gap1filter.sam` and `trans.sam` are combined to produce `alignfile` sam, keeping one set of header lines at the beginning. The header lines are passed on to output. `genesfile` is a list of all genes in the genome. The start and end for each gene is used to assign the alignments to gene pairs, and determine which alignments correspond to intramolecular structures or intermolecular interactions. The `bedgraphs` files can be produced using the bedtools package, for example: 
 ```
-bedtools genomecov -bg -split -strand + -ibam alignfile_sorted.bam -g chromosome_sizes >alignfile_plus.bedgraph
+bedtools genomecov -bg -split -strand + -ibam alignfile_sorted.bam -g chromosome_sizes > alignfile_plus.bedgraph
 bedtools genomecov -bg -split -strand - -ibam alignfile_sorted.bam -g chromosome_sizes > alignfile_minus.bedgraph
 ```
 
@@ -124,27 +132,4 @@ The fields of the BED12 file are used according to the [standard definition](htt
 * a = number of reads overlapping the left arm of the DG
 * b = number of reads overlapping the right arm of the DG
 
-
-
-
-
-
-
-
-
-
-## Test
-
-You can test CRSSANT using a collection of Homo sapiens ribosomal RNA (rRNA) test data that we have compiled:
-
-1. Download the compressed folder of [test data](https://github.com/zhipenglu/CRSSANT/tree/master/tests.tar.gz) and decompress using the command `tar -zxvf tests.tar.gz` or by double-clicking on the tar.gz file
-2. Specify the path/location where results should be written, e.g. `output`
-
-Run CRSSANT on all rRNA genes in region hs54S:
-```
-CRSSANT_path/CRSSANT tests/hsrRNA_reads.sam tests/hsrRNA.fa tests/hsrRNA_gene.bed -out output
-```
-or analyze specific genes, e.g. only reads whose left arms map to gene 5.8S and whose right arms map to gene 28S:
-```
-CRSSANT_path/CRSSANT tests/hsrRNA_reads.sam tests/hsrRNA.fa tests/hsrRNA_gene.bed -genes 5.8S,28S -out output
-```
+The sam output can be converted to bam for visualization in IGV, where DG and NG tags can be used to sort and group alignments. The bed output file can be visualized in IGV, where the two arms of each DG can be visualized as two 'exons', or as an arc the connects far ends of the DG (http://software.broadinstitute.org/software/igv/node/284). 
