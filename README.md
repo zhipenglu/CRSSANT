@@ -38,7 +38,6 @@ Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases),
 
 
 
-
 ## Step 1: Map reads to the genome
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
@@ -60,19 +59,25 @@ python gaptypes.py input.sam output_prefix glenlog nprocs
 Recommended parameters are as follows. 
 
 `glenlog`: -1. Scaling factor for gap extension penalty, equivalent to `scoreGenomicLengthLog2scale` in STAR 
+
 `minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
+
 `nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
 
 Successful completion of this step results in 7 files: 
 `cont.sam`: continuous alignments
+
 `gap1.sam`: non-continuous alignments, each has 1 gap
+
 `gapm.sam`: non-continuous alignments, each has more than 1 gaps
+
 `trans.sam`: non-continuous alignments with the 2 arms on different strands or chromosomes
+
 `homo.sam`: non-continuous alignments with the 2 arms overlapping each other
+
 `bad.sam`: non-continuous alignments with complex combinations of indels and gaps 
+
 `log.out`: log file for the run, including input/output alignment counts
-
-
 
 
 
