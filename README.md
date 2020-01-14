@@ -57,12 +57,10 @@ python gaptypes.py input.sam output_prefix glenlog nprocs
 ```
 
 Recommended parameters are as follows. 
+*`glenlog`: -1. Scaling factor for gap extension penalty, equivalent to `scoreGenomicLengthLog2scale` in STAR 
+*`minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
+*`nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
 
-`glenlog`: -1. Scaling factor for gap extension penalty, equivalent to `scoreGenomicLengthLog2scale` in STAR 
-
-`minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
-
-`nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
 
 Successful completion of this step results in 7 files: 
 `cont.sam`: continuous alignments
