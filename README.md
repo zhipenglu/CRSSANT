@@ -5,8 +5,6 @@ Briefly, the CRSSANT pipeline operates as follows. First, sequencing reads that 
 
 CRSSANT is written in Python and available as source code that you can download and run on yuor own machine. An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Fischer-Hwang et al.](LINKLINKLINK).
 
-
-
 ## Table of contents
 * [Download and install](https://github.com/zhipenglu/CRSSANT#download-and-install)
 * [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-1-map-reads-to-the-genome)
@@ -15,29 +13,22 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups)
 * [Test](https://github.com/zhipenglu/CRSSANT#test)
 
-## Download and install
-Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location, e.g. `CRSSANT_path`. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager (follow instructions in links in parentheses):
-
-No special installation is needed, but the dependencies need to be resolved before use. Currently, the NetworkX. Python dependencies are as follows: 
-Numpy, SciPy, etc., which are included in Anaconda python 3.6+ NetworkX has not been updated to be compatible with higher python versions. 
-* [STAR v2.7.1+](https://github.com/alexdobin/STAR)
+## Download and prepare environment
+Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
 
 * [NetworkX v2.1+](https://networkx.github.io/) ([Anaconda Cloud link](https://anaconda.org/anaconda/networkx))
+* [NumPy](http://www.numpy.org/) ([Anaconda link](https://anaconda.org/anaconda/numpy))
+* [SciPy](https://www.scipy.org/) ([Anaconda link](https://anaconda.org/anaconda/scipy))
+* [scikit-learn](http://scikit-learn.org/) ([Anaconda link](https://anaconda.org/anaconda/scikit-learn))
 
-Additional tools for used for general processing of high throughput sequencing data, including samtools, bedtools, 
+Additional tools for used for mapping and general processing of high throughput sequencing data, including STAR, samtools and bedtools. 
+* [STAR v2.7.1+](https://github.com/alexdobin/STAR)
+* [samtools v1.1+](http://www.htslib.org/)
+* [bedtools v2.22+](https://bedtools.readthedocs.io/en/latest/)
 
-* [NumPy](http://www.numpy.org/) ([Anaconda Cloud link](https://anaconda.org/anaconda/numpy))
-* [scikit-learn](http://scikit-learn.org/stable/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scikit-learn))
-* [SciPy](https://www.scipy.org/) ([Anaconda Cloud link](https://anaconda.org/anaconda/scipy))
-
-
-
-
-
-
-
-
-
+For visualization of the results, we recommend IGV, which has features for grouping alignments based on tags, such as DG and NG that we implemented here. IGV can also directly visualize DG summary information and RNA secondary structures, see [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups) for details. VARNA is recommended for visualizing RNA secondary structures in a variety of formats, including 
+* [IGV v2.4+](https://software.broadinstitute.org/software/igv/)
+* [VARNA v1.0+](http://varna.lri.fr/)
 
 
 
