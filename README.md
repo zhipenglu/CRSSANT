@@ -9,12 +9,11 @@ CRSSANT is written in Python and available as source code that you can download 
 
 ## Table of contents
 * [Download and install](https://github.com/zhipenglu/CRSSANT#download-and-install)
-* [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#map-reads-to-the-genome)
-* [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#classify-alignments)
-* [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#filter-spliced-and-short-gaps)
-* [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#cluster-alignments-to-groups)
+* [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-1-map-reads-to-the-genome)
+* [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-2-classify-alignments)
+* [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-3-filter-spliced-and-short-gaps)
+* [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups)
 * [Test](https://github.com/zhipenglu/CRSSANT#test)
-
 
 ## Download and install
 Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location, e.g. `CRSSANT_path`. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager (follow instructions in links in parentheses):
