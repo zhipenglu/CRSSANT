@@ -1,1 +1,12 @@
+Input files (4): 
+ACTB.sam
+ACTB.bed
+ACTB_plus.bedgraph
+ACTB_minus.bedgraph
 
+Output files (2): 
+ACTB.cliques.t_o0.1.sam
+ACTB.cliques.t_o0.1_dg.bedpe
+
+Converting bedpe to bed12 file (1): 
+ACTB.cliques.t_o0.1_dg.bed
