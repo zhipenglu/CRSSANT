@@ -102,6 +102,18 @@ Alignments counts in log.out from step 2 and filtered counts are used to calcula
 (gap1filtercount + gapmfiltercount + transcount + homocount)/inputcount
 ```
 
+Here is an example test of the gapfilter.py script using data provided in `tests/gapfilter` and the output stats. The input and output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. 
+
+```
+python gapfilter.py ACTB.gtf PARIS_hg38pri_ACTB_gap1.sam PARIS_hg38pri_ACTB_gap1filter.sam 11 yes
+Output: 
+Total alignments: 352
+All gapped alignments: 352
+Alignments with at least 1 good gaps: 291
+Alignments with at least 2 good gaps: 0
+Number of annotated splicing junctions: 5
+```
+
 ## Step 4: Cluster alignments to groups
 After filtering alignments, To assemble alignments to DGs and NGs using the crssant.py script, three types of input files are required, `alignfile`, `genesfile` and `bedgraphs`. For more on these parameters, see the explanation below and the bioRxiv preprint referenced at the top of this README. 
 ```
