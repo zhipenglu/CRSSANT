@@ -1,4 +1,11 @@
-Input files (): 
+Input files (1): 
+PARIS_U8U13_hg38pri_only.sam
 
-Output files (): 
-
+Output files (6 sam and 1 log): 
+PARIS_U8U13_hg38pri_onlybad.sam
+PARIS_U8U13_hg38pri_onlycont.sam
+PARIS_U8U13_hg38pri_onlygap1.sam
+PARIS_U8U13_hg38pri_onlygapm.sam
+PARIS_U8U13_hg38pri_onlyhomo.sam
+PARIS_U8U13_hg38pri_onlytrans.sam
+PARIS_U8U13_hg38pri_onlylog.out
