@@ -86,7 +86,18 @@ Successful completion of this step results in 7 files. All of these sam files ca
 
 
 ### --Testing `gaptypes.py`
-
+Here is an example test of the `gaptypes.py` script for filtering, rearranging and classifying alignments, using data provided in `tests/gaptypes`. The input data are alignments to two RNAs, SNORD118 (U8) chr17:8173453-8173588 and SNORD113 (U13) chr8:33513475-33513577, from HEK293 PARIS reads mapped to hg38pri. The output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. 
+```
+python gaptypes.py PARIS_U8U13_hg38pri_only.sam PARIS_U8U13_hg38pri_only -1 15 8
+Output counts: 
+Total input alignment number: 10093
+Continuous alignments (no gaps, cont.sam): 9179
+Two-segment gapped alignments (gap1.sam): 339
+Multi-segment gapped alignments (gapm.sam): 1
+Other chimeric (different str/chr, trans.sam): 1
+Overlapping chimeric (homotypic, homo.sam): 281
+Bad alignments (bad.sam): 0
+```
 
 ## Step 3: Filter spliced and short gaps
 Output files `gap1.sam` and `gapm.sam` may contain alignments that have only splicing junctions and short 1-2 nt gaps due to artifacts. These are filtered out using `gapfilter.py` before further processing. Splicing junctions and short gaps in other output files can be safely ignored. The `annotation` file containing the splicing junctions should be in GTF format. `idloc`, location of the transcript_ID field, is usually field 11. `short` is set to either `yes` which means 'remove short 1-2nt gaps', or `no`, which means 'ignore short 1-2nt gaps'.  
@@ -189,14 +200,4 @@ python seglendist.py inputfile filetype outputfile
 * `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
 
 When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
-
-
-
-
-
-
-
-
-
-
 
