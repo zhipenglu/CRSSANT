@@ -49,6 +49,20 @@ STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/read
 
 Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
 
+Here is a brief explanation of the optimized parameters for non-continuous alignments. See the bioRxiv preprint referenced at the top of this README for more detailed discussion of the optimization. The output contains very short segments, down to 7nt, and the unreliable ones are removed later using alignment-span-based penalty and segment connection dependent filtering (`gaptypes.py`).
+
+* `--outFilterScoreMinOverLread 0` allows mapping short segments
+* `--outSAMattributes All` includes chimeric tags needed for alignment processing
+* `--outSAMtype BAM Unsorted SortedByCoordinate` simplifies subsequent SAM processing
+* `--alignIntronMin 1` shifts deletions (`D`) to gaps (`N`) to equalize penalty. 
+* `--scoreGap* 0` removes all gap open penalty.
+* `--scoreGenomicLengthLog2scale -1` increases alignment span-based penalty
+* `--chimOutType WithinBAM HardClip` output alignments in one file and removes hardclips. 
+* `--chimSegmentMin 5` and `--chimJunctionOverhangMin 5` map chimera more permissively
+* `--chimScoreJunctionNonGTAG 0` removes penalty for splicing junctions in chimera
+* `-- chimScoreDropMax 80`, a higher value, and `--chimNonchimScoreDropMin 20` ensures that chimera are not produced when normal gapped alignments are possible. 
+
+
 ## Step 2: Classify alignments
 In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into 5 distinct types using `gaptypes.py`. 
 ```
