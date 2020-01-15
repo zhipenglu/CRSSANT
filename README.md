@@ -12,7 +12,7 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-2-classify-alignments)
 * [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-3-filter-spliced-and-short-gaps)
 * [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups)
-* [Test](https://github.com/zhipenglu/CRSSANT#test)
+* [Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#segment-and-gap-statistics)
 
 ## Download and prepare environment
 Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
@@ -73,7 +73,7 @@ Successful completion of this step results in 7 files. All of these sam files ca
 ## Step 3: Filter spliced and short gaps
 Output files `gap1.sam` and `gapm.sam` may contain alignments that have only splicing junctions and short 1-2 nt gaps due to artifacts. These are filtered out using `gapfilter.py` before further processing. Splicing junctions and short gaps in other output files can be safely ignored. The `annotation` file containing the splicing junctions should be in GTF format. `idloc`, location of the transcript_ID field, is usually field 11. `short` is set to either `yes` which means 'remove short 1-2nt gaps', or `no`, which means 'ignore short 1-2nt gaps'.  
 ```
-Usage: python gapfilter.py annotation insam outsam idloc short
+python gapfilter.py annotation insam outsam idloc short
 ```
 The output from `gap1.sam`, typically named `gap1filter.sam`, only contains alignments that pass the filter. The output from `gapm.sam`, typically named gapmfilter.sam, contain alignments with either 1 or more gaps that pass the filter. The following output is printed to the screen: 
 
@@ -133,3 +133,19 @@ The fields of the BED12 file are used according to the [standard definition](htt
 * b = number of reads overlapping the right arm of the DG
 
 The sam output can be converted to bam for visualization in IGV, where DG and NG tags can be used to sort and group alignments. The bed output file can be visualized in IGV, where the two arms of each DG can be visualized as two 'exons', or as an arc the connects far ends of the DG (http://software.broadinstitute.org/software/igv/node/284). 
+
+
+## Segment and gap statistics
+Segment and gap length distribution can be produced using two scripts `seglendist.py` and `gaplendist.py` to help understand the quality and properties of the sequencing data. Both scripts either use the sam file to produce a list of numbers, or use a list of numbers from a file to produce the cumulative distribution histogram. 
+
+Example command for creating the gap length list is as follows, where input.sam can be gap1.sam and gapm.sam, or their filtered output where splicing junctions and/or short gaps have been removed. 
+```
+python gaplendist.py inputfile filetype outputfile gaptype
+python seglendist.py inputfile filetype outputfile
+```
+* `filetype`: 'sam' file or text file containing 'list' of lengths 
+* `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
+
+When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
+
+
