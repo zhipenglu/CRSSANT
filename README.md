@@ -46,9 +46,9 @@ It is assumed that the reads have been demultiplexed and adapters removed. Befor
 ```
 STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
 ```
-
 Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
 
+### --Optimized STAR parameters
 Here is a brief explanation of the optimized parameters for non-continuous alignments. See the bioRxiv preprint referenced at the top of this README for more detailed discussion of the optimization. The output contains very short segments, down to 7nt, and the unreliable ones are removed later using alignment-span-based penalty and segment connection dependent filtering (`gaptypes.py`).
 
 * `--outFilterScoreMinOverLread 0` allows mapping short segments
@@ -68,12 +68,13 @@ In this step, alignments in the sam file are filtered to remove low-confidence s
 ```
 python gaptypes.py input.sam output_prefix glenlog nprocs
 ```
-
 Recommended parameters are as follows. 
 * `glenlog`: -1. Scaling factor for gap extension penalty, equivalent to `scoreGenomicLengthLog2scale` in STAR 
 * `minlen`: 15. Minimal length for a segment in an alignment to be considered confident for building the connection database
 * `nprocs`: 10. Number of CPUs to use for the run, depending availability of resources. 
 
+
+### --Output from `gaptypes.py`
 Successful completion of this step results in 7 files. All of these sam files can be converted to sorted bam for visualization on IGV. 
 * `cont.sam`: continuous alignments
 * `gap1.sam`: non-continuous alignments, each has 1 gap
@@ -82,6 +83,9 @@ Successful completion of this step results in 7 files. All of these sam files ca
 * `homo.sam`: non-continuous alignments with the 2 arms overlapping each other
 * `bad.sam`: non-continuous alignments with complex combinations of indels and gaps 
 * `log.out`: log file for the run, including input and output alignment counts (for `gap1`, `gapm`, `trans`, `homo` and `bad`)
+
+
+### --Testing `gaptypes.py`
 
 
 ## Step 3: Filter spliced and short gaps
@@ -101,7 +105,7 @@ Alignments counts in log.out from step 2 and filtered counts are used to calcula
 ```
 (gap1filtercount + gapmfiltercount + transcount + homocount)/inputcount
 ```
-
+### --Testing `gapfilter.py`
 Here is an example test of the gapfilter.py script using data provided in `tests/gapfilter` and the output stats. The input and output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. 
 
 ```
@@ -147,19 +151,31 @@ The pipeline uses the spectral clustering method to cluster reads into DGs with 
 
 The user may also specify the cliques-finding method for clustering DGs by specifying the clustering flag `cluster` with the `cliques` option. If the cliques-finding method is specified, `t_o` may also be specified, and again may be any float between 0 and 1. The eigenvalue threshold `t_eig` is not used in the cliques-finding method. By default, for the cliques-finding method the overlap threshold is set to 0.1. 
 
-### --Output files
+### --Output from `crssant.py`
 After DG clustering, crssant.py verifies that the DGs do not contain any non-overlapping reads, i.e. any reads where the start position of its left arm is greater than or equal to the stop position of the right arm of any other read in the DG. If the DGs do not contain any non-overlapping reads, then the following output files ending in the following are written:
 
-* `_CRSSANT.sam`: SAM file containing alignments that were successfully assigned to DGs, plus DG and NG annotations
-* `_CRSSANT_dg.bed`: BED12 file listing all duplex groups. 
+* `.sam`: SAM file containing alignments that were successfully assigned to DGs, plus DG and NG annotations
+* `dg.bedpe`: bedpe file listing all duplex groups.
 
-The fields of the BED12 file are used according to the [standard definition](https://genome.ucsc.edu/FAQ/FAQformat.html#format1) with the exception of fields 4 and 5. Field 5 `score` is defined as the number of non-continuous alignments in this DG.  Field 4 `name` is defined in the format `gene1,gene2_DGID_covfrac`, where `gene1,gene2` represents the two genes that this DG connects, `DGID` is a numerical ID of the DG, `covfrac` is the confidence of the DG, defined as c / sqrt(a\*b) and
+The sam output can be converted to bam for visualization in IGV, where DG and NG tags can be used to sort and group alignments. The bed output file can be visualized in IGV, where the two arms of each DG can be visualized as two 'exons', or as an arc the connects far ends of the DG (http://software.broadinstitute.org/software/igv/node/284). 
+
+DGs with the 2 arms on the same strand and chromosome can be further converted to bed12 for visualization on IGV. The fields of the BED12 file are used according to the [standard definition](https://genome.ucsc.edu/FAQ/FAQformat.html#format1) with the exception of fields 4 and 5. Field 5 `score` (or field 8 in bedpe) is defined as the number of non-continuous alignments in this DG.  Field 4 `name` (or field 7 in bedpe) is defined in the format `gene1,gene2_DGID_covfrac`, where `gene1,gene2` represents the two genes that this DG connects, `DGID` is a numerical ID of the DG, `covfrac` is the confidence of the DG, defined as c / sqrt(a\*b) and
 * c = number of reads in a given DG
 * a = number of reads overlapping the left arm of the DG
 * b = number of reads overlapping the right arm of the DG
 
-The sam output can be converted to bam for visualization in IGV, where DG and NG tags can be used to sort and group alignments. The bed output file can be visualized in IGV, where the two arms of each DG can be visualized as two 'exons', or as an arc the connects far ends of the DG (http://software.broadinstitute.org/software/igv/node/284). 
 
+### --Testing `crssant.py`
+Here is an example test of the `crssant.py` script for DG and NG assembly, using data provided in `tests/crssant`. The output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. The DG and NG tags can be used to group and sort alignments. 
+```
+python crssant.py -out ./ -cluster cliques ACTB.sam ACTB.bed ACTB_plus.bedgraph,ACTB_minus.bedgraph
+```
+
+DGs on the same chromosome and strand can be converted to bed12 format for visualization on IGV. First use `bedpetobed12.py` to convert, then use bedtools to sort bed file and finally add the header line `track graphType=arc`. 
+```
+python bedpetobed12.py ACTB.cliques.t_o0.1_dg.bedpe ACTB.cliques.t_o0.1_dg.bed
+sortBed -i ACTB.cliques.t_o0.1_dg.bed > ACTB.cliques.t_o0.1_dg_sorted.bed
+```
 
 ## Segment and gap statistics
 Segment and gap length distribution can be produced using two scripts `seglendist.py` and `gaplendist.py` to help understand the quality and properties of the sequencing data. Both scripts either use the sam file to produce a list of numbers, or use a list of numbers from a file to produce the cumulative distribution histogram. 
@@ -173,5 +189,14 @@ python seglendist.py inputfile filetype outputfile
 * `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
 
 When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
+
+
+
+
+
+
+
+
+
 
 
