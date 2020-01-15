@@ -1,5 +1,5 @@
 """
-seglendist.py. Copyright: Zhipeng Lu, 2020, zhipengluchina@gmail.com
+seglendist.py. Zhipeng Lu, 2020, zhipengluchina@gmail.com
 This script calculates the size distribution of each segment in STAR alignments. 
 
 Requires python3.
