@@ -123,19 +123,19 @@ Optional arguments:
 * `-t_eig`: Eigenratio threshold (positive) for "spectral" only. Default: 5. 
 
 
-### Required input files
+### --Required input files
 Alignment files `gap1filter.sam` and `trans.sam` are combined to produce `alignfile` sam, keeping one set of header lines at the beginning. The header lines are passed on to output. `genesfile` is a list of all genes in the genome. The start and end for each gene is used to assign the alignments to gene pairs, and determine which alignments correspond to intramolecular structures or intermolecular interactions. The `bedgraphs` files can be produced using the bedtools package, for example: 
 ```
 bedtools genomecov -bg -split -strand + -ibam alignfile_sorted.bam -g chromosome_sizes > alignfile_plus.bedgraph
 bedtools genomecov -bg -split -strand - -ibam alignfile_sorted.bam -g chromosome_sizes > alignfile_minus.bedgraph
 ```
 
-### Clustering methods
+### --Clustering methods
 The pipeline uses the spectral clustering method to cluster reads into DGs with overlap threshold parameter of `t_o=0.5` and eigenratio threshold of `t_eig=5`. The default spectral clustering method may be operated with different overlap threshold and eigenratio threshold parameters by specifying one or both with the flags `t_o` and `t_eig`, respectively. `t_o` may be any float between 0 and 1, and `t_eig` may be any positive number. Increasing `t_o` tends to result in more DGs that contain fewer reads, and increasing `t_eig` tends to result in fewer DGs containing more reads.
 
 The user may also specify the cliques-finding method for clustering DGs by specifying the clustering flag `cluster` with the `cliques` option. If the cliques-finding method is specified, `t_o` may also be specified, and again may be any float between 0 and 1. The eigenvalue threshold `t_eig` is not used in the cliques-finding method. By default, for the cliques-finding method the overlap threshold is set to 0.1. 
 
-### Output files
+### --Output files
 After DG clustering, crssant.py verifies that the DGs do not contain any non-overlapping reads, i.e. any reads where the start position of its left arm is greater than or equal to the stop position of the right arm of any other read in the DG. If the DGs do not contain any non-overlapping reads, then the following output files ending in the following are written:
 
 * `_CRSSANT.sam`: SAM file containing alignments that were successfully assigned to DGs, plus DG and NG annotations
