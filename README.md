@@ -64,7 +64,7 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 
 
 ## Step 2: Classify alignments
-In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into 5 distinct types using `gaptypes.py`. 
+In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into [5 distinct types](figures/s3_noncon.pdf) using `gaptypes.py`. 
 ```
 python gaptypes.py input.sam output_prefix glenlog nprocs
 ```
