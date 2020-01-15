@@ -1,11 +1,4 @@
 """
-To be done:
-1. Need to test other RNAs and genome-wide datasets
-2. How to deal with overlapping genes? Include all of them, check again later
-3. Remove the code for spectral clustering, since it does not work well.
-4. Resolve the dependency problem permanently.
-5. 
-
 CRSSANT: Crosslinked RNA Secondary Structure Analysis using Network Techniques
 Main script for running CRSSANT analysis and discovery pipelines.
 Author: Irena Fischer-Hwang and Zhipeng Lu
@@ -74,45 +67,6 @@ Run the analysis. 3 functions
 def run_analysis(instance): This function runs the main analysis in parallel.
 def parse_args(): Function to parse the arguments
 def main(): Main function. Run preprocessing, parallel graph analysis and output
-
-
-Generate a test case:
-bed file: 5 genes on 3 chromosomes: hs45S, hs12S and hs16S
-fasta file: 3 chromosomes
-sam file: only gap1 reads on 45S, but not rri reads on different chr or strand
-get another sam for rri reads.
-
-python CRSSANT2.py -out ./test1 -cluster cliques tests/hsrRNA_reads.sam \
-tests/hsrRNA.fa tests/hsrRNA_gene.bed
-next analyze the output 3' end location. How are the reads organized?
-The CRSSANT2.py script is optimized for global analysis.
-
-conda activate py3.6
-cd /Users/lu/Documents/scripts/CRSSANT_lu
-python CRSSANT1.py -out ./test1 -cluster spectral tests/hsrRNA_reads.sam \
-tests/hsrRNA_gene.bed tests/hsrRNA.fa
-
-python CRSSANT2.py -out ./test1 -cluster cliques tests/hsrRNA_reads.sam \
-tests/hsrRNA_gene.bed tests/hsrRNA_plus.bedgraph,tests/hsrRNA_minus.bedgraph
-
-python CRSSANT2.py -out ./test1 -cluster spectral tests/hsrRNA_reads.sam \
-tests/hsrRNA_gene.bed tests/hsrRNA_plus.bedgraph,tests/hsrRNA_minus.bedgraph
-
-python CRSSANT2.py -out ./test1 -cluster spectral -n 4 -covlimit 100 \
-tests/hsrRNA_reads.sam tests/hsrRNA_gene.bed \
-tests/hsrRNA_plus.bedgraph,tests/hsrRNA_minus.bedgraph
-
-
-DGs on the same chromosome and strand can be converted to bed12 format for
-visualization on IGV, using bedpetobed12.py
-
-python ~/Documents/scripts/duplex/bedpetobed12/bedpetobed12.py \
-test1hsrRNA_reads.spectral.t_o0.1.t_eig5_dg.bedpe \
-test1hsrRNA_reads.spectral.t_o0.1.t_eig5_dg.bed
-
-sortBed -i test1hsrRNA_reads.spectral.t_o0.1.t_eig5_dg.bed > \
-test1hsrRNA_reads.spectral.t_o0.1.t_eig5_dg_sorted.bed
-add the header line: track graphType=arc
 
 """
 
