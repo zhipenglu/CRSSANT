@@ -200,4 +200,4 @@ python seglendist.py inputfile filetype outputfile
 * `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
 
 When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
-
+ 
