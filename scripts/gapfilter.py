@@ -1,5 +1,5 @@
 """
-gapfilter.py, Zhipeng Lu, zhipengluchina@gmail.com. 
+gapfilter.py, Zhipeng Lu. 2020, zhipengluchina@gmail.com. 
 This script filters PARIS or other data to remove splice junction alignments
 and short deletions, e.g. 1-2nt gaps.
 
