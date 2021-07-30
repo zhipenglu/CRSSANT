@@ -1,5 +1,5 @@
 """
-bedpetobed12.py. Zhipeng Lu 2020, zhipengluchina@gmail.com
+bedpetobed12.py. Zhipeng Lu. 2020, zhipengluchina@gmail.com
 
 This script converts "convertable" bedpe records to bed12 format, which means
 in the record in bedpe satisfies (chrom1 == chrom2) and (strand1 == strand2). 
