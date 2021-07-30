@@ -3,6 +3,7 @@ CRSSANT: Crosslinked RNA Secondary Structure Analysis using Network Techniques
 Main script for running CRSSANT analysis and discovery pipelines.
 Author: Irena Fischer-Hwang and Zhipeng Lu
 Contact: ihwang@stanford.edu, zhipengl@usc.edu.
+Finalized on 2020. 
 Currently only works under python 3.6 because networkx is only
 compatible with python 3.6, but not newer versions. The current networkx version
 2.4 is not compatible with current python 3.8. 
