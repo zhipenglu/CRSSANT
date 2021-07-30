@@ -1,5 +1,6 @@
 """
 Zhipeng Lu, 2020, zhipengluchina@gmail.com
+Requires python 3. 
 
 gaplendist.py, a simple script to plot the length of gaps (N). The input file
 can be any type of SAM. For example, from the direct output of STAR
