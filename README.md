@@ -6,7 +6,7 @@ Briefly, the CRSSANT pipeline operates as follows. First, sequencing reads that 
 CRSSANT is written in Python and available as source code that you can download and run directly on your own machine (no compiling needed). An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Fischer-Hwang et al.](LINKLINKLINK).
 
 ## Table of contents
-* [Download and install](https://github.com/zhipenglu/CRSSANT#download-and-install)
+* [Download and prepare environment](https://github.com/zhipenglu/CRSSANT#download-and-prepare-environment)
 * [System requirements and tests](https://github.com/zhipenglu/CRSSANT#system-requirements-and-tests)
 * [Step 1: Preprocessing fastq input files](https://github.com/zhipenglu/CRSSANT#step-1-preprocessing-fastq-input-files)
 * [Step 2: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-2-map-reads-to-the-genome)
