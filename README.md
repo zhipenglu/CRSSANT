@@ -39,8 +39,12 @@ The programs are generally run in x86-64 compatible processors, including 64 bit
 Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance.
 
 
+## Step 1: Preprocessing fastq input files
+Sequencing data can be processed using various published tools to demultiplex samples, and remove barcodes. Since each library preparation uses a different approach, we cannot recommend the same method for all of them. Here is an example of preprocessing PARIS data based on our recently published library preparation protocol. 
 
-## Step 1: Map reads to the genome
+
+
+## Step 2: Map reads to the genome
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
 ```
