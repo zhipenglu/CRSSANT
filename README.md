@@ -13,7 +13,7 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 3: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-3-classify-alignments)
 * [Step 4: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-4-segment-and-gap-statistics)
 * [Step 5: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-5-filter-spliced-and-short-gaps)
-* [Step 6: Cluster gap1 & trans to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-&-trans-to-dgs)
+* [Step 6: Cluster gap1 & trans to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-trans-alignments-to-dgs)
 * [Step 7: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gapm-alignments-to-tgs)
 
 ## Download and prepare environment
