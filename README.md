@@ -3,7 +3,7 @@ RNA crosslinking, proximity ligation and high throughput sequencing produces non
 
 Briefly, the CRSSANT pipeline operates as follows. First, sequencing reads that have been processed to remove adapters are mapped references with STAR and a new set of optimized options. Second, alignments are filtered, rearranged and classified into different types (gaptypes.py and gapfilter.py). Third, we use network analysis methods to cluster non-continuous alignments into DGs and calculate the confidence for each DG. The DGs are used as the foundation for the assembly of TGs. 
 
-CRSSANT is written in Python and available as source code that you can download and run directly on your own machine (no compiling needed). An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Fischer-Hwang et al.](LINKLINKLINK).
+CRSSANT is written in Python and available as source code that you can download and run directly on your own machine (no compiling needed). An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Zhang et al. 2021](https://www.biorxiv.org/content/10.1101/2021.08.01.454689v1).
 
 ## Table of contents
 * [Download and prepare environment](https://github.com/zhipenglu/CRSSANT#download-and-prepare-environment)
@@ -38,7 +38,7 @@ For visualization of the results, we recommend IGV, which has features for group
 
 The programs are generally run in x86-64 compatible processors, including 64 bit Linux or Mac OS X, if there is enough memory. Read mapping against mammalian genomes using STAR requires at least 30G memory. Alignment classification typically requires 100G memory. As a result, these two steps should be run in a cluster with large memory. 
 
-Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance. In addition, shell scripts for a typical pipeline are also provided as examples. 
+Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. Furthermore, we provided source data for all figures in this paper to help readers reproduce the figures and troubleshoot potential problems (`sourcedata`). The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance. In addition, shell scripts for a typical pipeline are also provided as examples. 
 
 
 ## Step 1: Preprocessing fastq input files
