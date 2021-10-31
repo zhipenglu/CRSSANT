@@ -14,7 +14,7 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 4: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-4-segment-and-gap-statistics)
 * [Step 5: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-5-filter-spliced-and-short-gaps)
 * [Step 6: Cluster gap1 & trans to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-&-trans-to-dgs)
-* [Step 7: Cluster gapm to TGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gapm-to-tgs)
+* [Step 7](https://github.com/zhipenglu/CRSSANT#step-7)
 
 ## Download and prepare environment
 Download the scripts and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
@@ -38,7 +38,7 @@ For visualization of the results, we recommend IGV, which has features for group
 
 The programs are generally run in x86-64 compatible processors, including 64 bit Linux or Mac OS X, if there is enough memory. Read mapping against mammalian genomes using STAR requires at least 30G memory. Alignment classification typically requires 100G memory. As a result, these two steps should be run in a cluster with large memory. 
 
-Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance. In addition, shell scripts for a typical pipeline is also provided as examples. 
+Test datasets and example output files are provided for all steps except STAR mapping, which is a well maintained package. Test files are located in the `tests` folder. The analysis pipeline is preferably run as separate steps to allow maximal control and quality assurance. In addition, shell scripts for a typical pipeline are also provided as examples. 
 
 
 ## Step 1: Preprocessing fastq input files
@@ -209,7 +209,7 @@ sortBed -i ACTB.cliques.t_o0.1_dg.bed > ACTB.cliques.t_o0.1_dg_sorted.bed
 ```
 
 
-## Step 7: Cluster gapm to DGs
+## Step 7
 After assembly of DGs from single-gap or two-segment alignments (including gap1 and trans), the DGs are used as the foundation to assemble tri-segment groups (TGs) from gapm alignments (only 3-segment ones are assembled at the moment, since reads with more than 3 segments are extremely rare). 
  
  
