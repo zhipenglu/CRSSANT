@@ -69,7 +69,7 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 * `-- chimScoreDropMax 80`, a higher value, and `--chimNonchimScoreDropMin 20` ensures that chimera are not produced when normal gapped alignments are possible. 
 
 
-## Step 2: Classify alignments
+## Step 3: Classify alignments
 In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into ![5 distinct types](figures/s3_noncon.pdf) using `gaptypes.py`. 
 ```
 python gaptypes.py input.sam output_prefix glenlog nprocs
@@ -105,7 +105,21 @@ Overlapping chimeric (homotypic, homo.sam): 281
 Bad alignments (bad.sam): 0
 ```
 
-## Step 3: Filter spliced and short gaps
+## Step 4: Segment and gap statistics
+Segment and gap length distribution can be produced using two scripts `seglendist.py` and `gaplendist.py` to help understand the quality and properties of the sequencing data. Both scripts either use the sam file to produce a list of numbers, or use a list of numbers from a file to produce the cumulative distribution histogram. 
+
+Example command for creating the gap length list is as follows, where input.sam can be gap1.sam and gapm.sam, or their filtered output where splicing junctions and/or short gaps have been removed. 
+```
+python gaplendist.py inputfile filetype outputfile gaptype
+python seglendist.py inputfile filetype outputfile
+```
+* `filetype`: 'sam' file or text file containing 'list' of lengths 
+* `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
+
+When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
+
+
+## Step 5: Filter spliced and short gaps
 Output files `gap1.sam` and `gapm.sam` may contain alignments that have only splicing junctions and short 1-2 nt gaps due to artifacts. These are filtered out using `gapfilter.py` before further processing. Splicing junctions and short gaps in other output files can be safely ignored. The `annotation` file containing the splicing junctions should be in GTF format. `idloc`, location of the transcript_ID field, is usually field 11. `short` is set to either `yes` which means 'remove short 1-2nt gaps', or `no`, which means 'ignore short 1-2nt gaps'.  
 ```
 python gapfilter.py annotation insam outsam idloc short
@@ -135,7 +149,7 @@ Alignments with at least 2 good gaps: 0
 Number of annotated splicing junctions: 5
 ```
 
-## Step 4: Cluster alignments to groups
+## Step 6: Cluster gap1 & trans alignments to DGs
 After filtering alignments, To assemble alignments to DGs and NGs using the crssant.py script, three types of input files are required, `alignfile`, `genesfile` and `bedgraphs`. For more on these parameters, see the explanation below and the bioRxiv preprint referenced at the top of this README. 
 ```
 python crssant.py [-h] [-out OUT] [-cluster CLUSTER] [-n N] [-covlimit COVLIMIT] [-t_o T_O] [-t_eig T_EIG] alignfile genesfile bedgraphs
@@ -194,16 +208,10 @@ python bedpetobed12.py ACTB.cliques.t_o0.1_dg.bedpe ACTB.cliques.t_o0.1_dg.bed
 sortBed -i ACTB.cliques.t_o0.1_dg.bed > ACTB.cliques.t_o0.1_dg_sorted.bed
 ```
 
-## Segment and gap statistics
-Segment and gap length distribution can be produced using two scripts `seglendist.py` and `gaplendist.py` to help understand the quality and properties of the sequencing data. Both scripts either use the sam file to produce a list of numbers, or use a list of numbers from a file to produce the cumulative distribution histogram. 
 
-Example command for creating the gap length list is as follows, where input.sam can be gap1.sam and gapm.sam, or their filtered output where splicing junctions and/or short gaps have been removed. 
-```
-python gaplendist.py inputfile filetype outputfile gaptype
-python seglendist.py inputfile filetype outputfile
-```
-* `filetype`: 'sam' file or text file containing 'list' of lengths 
-* `gaptype`: 'min', only the shortest gap in the alignment, or 'all' for all gaps
-
-When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
+## Step 7: Cluster gapm alignments to DGs
+After assembly of DGs from single-gap or two-segment alignments (including gap1 and trans), the DGs are used as the foundation to assemble tri-segment groups (TGs) from gapm alignments (only 3-segment ones are assembled at the moment, since reads with more than 3 segments are extremely rare). 
  
+ 
+ 
+
