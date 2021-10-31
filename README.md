@@ -211,7 +211,17 @@ sortBed -i ACTB.cliques.t_o0.1_dg.bed > ACTB.cliques.t_o0.1_dg_sorted.bed
 
 ## Step 7: Cluster gapm alignments to TGs
 After assembly of DGs from single-gap or two-segment alignments (including gap1 and trans), the DGs are used as the foundation to assemble tri-segment groups (TGs) from gapm alignments (only 3-segment ones are assembled at the moment, since reads with more than 3 segments are extremely rare). 
- 
- 
- 
 
+### --Required input files
+The output bedpe file from the DG assembly for the RNA of interest is used as the foundation to assemble TGs. The gapmfilter.sam file which contains the filtered gapm alignments are assembled into the TGs. 
+
+### --Output from `gapmcluster.py`
+TG clustering produces a sam file just like the gapm input sam file, except the addition of a new TG tag at the end of each alignment record. The output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. The TG tag can be used to group and sort alignments. 
+
+### --Testing `gapmcluster.py`
+Here is an example test of the `gapmcluster.py` script for TG assembly, using data provided in `tests/gapm`. This example is the human 7SK RNA. 
+```
+python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
+```
+
+## END
