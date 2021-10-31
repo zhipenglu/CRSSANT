@@ -149,7 +149,7 @@ Alignments with at least 2 good gaps: 0
 Number of annotated splicing junctions: 5
 ```
 
-## Step 6: Cluster gap1 & trans to DGs
+## Step 6: Cluster gap1 & trans alignments to DGs
 After filtering alignments, To assemble alignments to DGs and NGs using the crssant.py script, three types of input files are required, `alignfile`, `genesfile` and `bedgraphs`. For more on these parameters, see the explanation below and the bioRxiv preprint referenced at the top of this README. 
 ```
 python crssant.py [-h] [-out OUT] [-cluster CLUSTER] [-n N] [-covlimit COVLIMIT] [-t_o T_O] [-t_eig T_EIG] alignfile genesfile bedgraphs
