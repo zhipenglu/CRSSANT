@@ -1,0 +1,22 @@
+Supplemental Fig. 6D. 
+The simulation and CRSSANT clustering runs are the same as in Fig. 4C-D. Here, the wallclock time is recorded for each run as follows. 
+
+cliques core=5 
+t_o,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9
+time(s),43.2,45.5,44.1,44.7,44.7,46.6,60.7,189.4,178.1
+
+cliques core=10
+t_o,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9
+time(s),73.6,69.5,52.1,51.5,49.8,48.8,54.4,183.6,270.8
+
+cliques core=15
+t_o,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9
+time(s),57.9,59.2,60.1,59.2,60.8,57.2,60.5,93.1,331.4
+
+spectral core=5 t_eig=5
+t_o,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9
+time(s),45.4,46.6,48.6,47.2,46.2,49.1,50.9,49.7,166.7
+
+spectral core=5 t_o=0.5
+t_eig,1,2,3,4,5,6,7,8,9
+time(s),45.1,45.1,49.6,48.6,46.2,49.1,49.3,45.7,51.6
