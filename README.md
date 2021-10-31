@@ -8,11 +8,13 @@ CRSSANT is written in Python and available as source code that you can download 
 ## Table of contents
 * [Download and install](https://github.com/zhipenglu/CRSSANT#download-and-install)
 * [System requirements and tests](https://github.com/zhipenglu/CRSSANT#system-requirements-and-tests)
-* [Step 1: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-1-map-reads-to-the-genome)
-* [Step 2: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-2-classify-alignments)
-* [Step 3: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-3-filter-spliced-and-short-gaps)
-* [Step 4: Cluster alignments to groups](https://github.com/zhipenglu/CRSSANT#step-4-cluster-alignments-to-groups)
-* [Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#segment-and-gap-statistics)
+* [Step 1: Preprocessing fastq input files](https://github.com/zhipenglu/CRSSANT#step-1-preprocessing-fastq-input-files)
+* [Step 2: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-2-map-reads-to-the-genome)
+* [Step 3: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-3-classify-alignments)
+* [Step 4: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-4-segment-and-gap-statistics)
+* [Step 5: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-5-filter-spliced-and-short-gaps)
+* [Step 6: Cluster gap1 & trans alignments to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-&-trans-alignments-to-DGs)
+* [Step 7: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gapm-alignments-to-TGs)
 
 ## Download and prepare environment
 Navigate to the latest [release](https://github.com/zhipenglu/CRSSANT/releases), right click on the source code, and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
