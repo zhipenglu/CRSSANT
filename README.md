@@ -24,7 +24,7 @@ Download the scripts and save it to a known path/location. No special installati
 * [SciPy](https://www.scipy.org/) ([Anaconda link](https://anaconda.org/anaconda/scipy))
 * [scikit-learn](http://scikit-learn.org/) ([Anaconda link](https://anaconda.org/anaconda/scikit-learn))
 
-Additional tools for used for mapping and general processing of high throughput sequencing data, including STAR, samtools and bedtools. 
+Additional tools for used for mapping and general processing of high throughput sequencing data, including STAR, samtools and bedtools. The STAR should be used with optimized parameters shown below. 
 * [STAR v2.7.1+](https://github.com/alexdobin/STAR)
 * [samtools v1.1+](http://www.htslib.org/)
 * [bedtools v2.22+](https://bedtools.readthedocs.io/en/latest/)
