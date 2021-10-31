@@ -219,7 +219,7 @@ The output bedpe file from the DG assembly for the RNA of interest is used as th
 TG clustering produces a sam file just like the gapm input sam file, except the addition of a new TG tag at the end of each alignment record. The output sam files can be converted to sorted bam for visualization on IGV under hg38 genome reference. The TG tag can be used to group and sort alignments. 
 
 ### --Testing `gapmcluster.py`
-Here is an example test of the `gapmcluster.py` script for TG assembly, using data provided in `tests/gapm`. This example is the human 7SK RNA. 
+Here is an example test of the `gapmcluster.py` script for TG assembly, using data provided in `tests/gapm`. This example is the human 7SK RNA. The correlation between DG and TG coverages can be calculated using the DGTGcorr.py script, for example, using data from the Fig. 5E sourcedata folder. 
 ```
 python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
 ```
