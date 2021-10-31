@@ -14,7 +14,7 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 4: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-4-segment-and-gap-statistics)
 * [Step 5: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-5-filter-spliced-and-short-gaps)
 * [Step 6: Cluster gap1 & trans to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-&-trans-to-dgs)
-* [Step 7](https://github.com/zhipenglu/CRSSANT#step-7)
+* [Step 7: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-7)
 
 ## Download and prepare environment
 Download the scripts and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
