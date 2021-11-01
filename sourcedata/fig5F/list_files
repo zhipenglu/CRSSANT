@@ -1,0 +1,5 @@
+reference for this analysis: hsRNA.fa and hsRNA_gene.bed
+All DGs on 28S: HEK293toRNA_28S_28S_DGs.bedgraph
+DGs supporting TGs: 28S_28S_28S_DGs.bedgraph
+TGs assembled before shuffling: 28S_28S_28S_TGs.bedgraph
+TGs assembled after shuffling: 28S_28S_28S_shuffled_TGs.bedgraph
