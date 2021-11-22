@@ -257,6 +257,7 @@ Before running `run_CRSSANT.py`, ensure that the following files are placed in a
 * BAM/SAM file containing aligned reads from the sample of interest using the parameters listed above. 
 * Gene bed file should contain six required BED fileds: Chrom, ChromStart, ChromEnd, Name, Score, Strand.
 * GTF file, the annotation file containing the splicing junctions should be in GTF format.
+
 The output files from CRSSANT are gathered in four folders:
 * alignments_classify: classified alignments (6 categories)
 * alignments_statistics: alignment statistics, containing segment and gap length distributions
