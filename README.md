@@ -6,8 +6,7 @@ Briefly, the CRSSANT pipeline operates as follows. First, sequencing reads that 
 CRSSANT is written in Python and available as source code that you can download and run directly on your own machine (no compiling needed). An earlier version of the DG assembly method is available here: (https://github.com/ihwang/CRSSANT). For more about the CRSSANT pipeline, please see the [bioRxiv preprint by Zhang et al. 2021](https://www.biorxiv.org/content/10.1101/2021.08.01.454689v1).
 
 ## Table of contents
-* [Download and prepare environment](https://github.com/zhipenglu/CRSSANT#download-and-prepare-environment)
-* [System requirements and tests](https://github.com/zhipenglu/CRSSANT#system-requirements-and-tests)
+* [Step 0: Download and prepare environment](https://github.com/zhipenglu/CRSSANT#step-0-download-and-prepare-environment)
 * [Step 1: Preprocessing fastq input files](https://github.com/zhipenglu/CRSSANT#step-1-preprocessing-fastq-input-files)
 * [Step 2: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-2-map-reads-to-the-genome)
 * [Step 3. Rearrange softclipped alignments and remap](https://github.com/zhipenglu/CRSSANT#step-3-rearrange-softclipped-alignments-and-remap)
@@ -16,9 +15,10 @@ CRSSANT is written in Python and available as source code that you can download 
 * [Step 6: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-6-filter-spliced-and-short-gaps)
 * [Step 7: Cluster gap1 and trans alignments to DGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gap1-and-trans-alignments-to-dgs)
 * [Step 8: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-8-cluster-gapm-alignments-to-tgs)
+* [Step 9: Analysis of RNA homodimers](https://github.com/zhipenglu/CRSSANT#step-9-analysis-of-rna-homodimers)
 * [Running CRSSANT as a pipeline](https://github.com/zhipenglu/CRSSANT#running-crssant-as-a-pipeline)
 
-## Download and prepare environment
+## Step 0: Download and prepare environment
 Download the scripts and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
 
 * [NetworkX v2.1+](https://networkx.github.io/) ([Anaconda link](https://anaconda.org/anaconda/networkx))
@@ -36,7 +36,7 @@ For visualization of the results, we recommend IGV, which has features for group
 * [VARNA v1.0+](http://varna.lri.fr/)
 
 
-## System requirements and tests
+### System requirements and tests
 
 The programs are generally run in x86-64 compatible processors, including 64 bit Linux or Mac OS X, if there is enough memory. Read mapping against mammalian genomes using STAR requires at least 30G memory. Alignment classification typically requires 100G memory. As a result, these two steps should be run in a cluster with large memory. 
 
@@ -232,7 +232,62 @@ Here is an example test of the `gapmcluster.py` script for TG assembly, using da
 python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
 ```
 
+
+
+## Step 9: Analysis of RNA homodimers
+The overlapping chimeric alignments indicate homotypic interactions, or RNA homodimers. The homo.sam file is further processed as follows to identify potential homodimers. 
+
+
 ## Running CRSSANT as a pipeline
+The entire pipeline can be run step by step to give the user maximal control. We prefer this approach for two reasons. First, it is often easier for beginners to locate the problems and fix them. Second, even for experienced users, some of the steps may require changes of parameters, when running the pipeline step by step allows the users to only rerun the necessary steps, and therefore saves time. Once all trouble shooting and parameter testing are completed, a python script is used to integrate the pipeline, steps 4-8, after the STAR mapping step. 
+
+```
+python run_CRSSANT.py input_dir output_dir sample_name Gtf idloc genesfile outprefix
+```
+* `input_dir`: Full path to the directory of input files
+* `output_dir`: Full path to the directory of output files
+* `sample_name`: Name of the sample
+* `Gtf`: The annotation file containing the splicing junctions
+* `idloc`: Column number of the transript_ID field in GTF files, typically 11.
+* `genesfile`: Gene annotations (BED format)
+* `outprefix`: Output prefix
+
+### --Input and output files 
+Before running `run_CRSSANT.py`, ensure that the following files are placed in a single location/folder. 
+* BAM/SAM file containing aligned reads from the sample of interest using the parameters listed above. 
+* Gene bed file should contain six required BED fileds: Chrom, ChromStart, ChromEnd, Name, Score, Strand.
+* GTF file, the annotation file containing the splicing junctions should be in GTF format.
+The output files from CRSSANT are gathered in four folders:
+* alignments_classify: classified alignments (6 categories)
+* alignments_statistics: alignment statistics, containing segment and gap length distributions
+* alignments_DGs: created at step of DGs assembly
+* alignments_TGs: created at step of TGs assembly
+
+### --Output folder 1: alignments_classify
+Successful completion of this step results in 7 files. All of these sam files can be converted to sorted bam for visualization on IGV.
+* cont.sam: continuous alignments
+* gap1.sam: non-continuous alignments with 1 gap
+* gapm.sam: non-continuous alignments with more than 1 gaps
+* trans.sam: non-continuous alignments with the 2 arms on different strands or chromosomes
+* homo.sam: non-continuous alignments with the 2 arms overlapping each other
+* bad.sam: non-continuous alignments with complex combinations of indels and gaps
+* log.out: log file for the run, including input and output alignment counts (for cont, gap1, gapm, trans, homo and bad)
+
+### --Output folder 2: alignments_statistics
+The following two files are generated to show the distribution of gap and segment lengths. 
+* GapLen_distribution.pdf: Gap length distribution
+* SegLen_distribution.pdf: Segment length distribution
+
+### --Output folder 3: alignments_DGs
+The following 2 files are produced for DG assembly. 
+* .sam: SAM file containing alignments that were successfully assigned to DGs, plus DG and NG annotations
+* dg.bedpe: bedpe file listing all duplex groups.
+
+### --Output folder 4: alignments_TGs
+TG clustering produces a sam file just like the gapm input sam file, except the addition of a new TG tag at the end of each alignment record. The output sam files can be converted to sorted bam for visualization on IGV. The TG tag can be used to group and sort alignments.
+
+
+
 
 
 ## END
