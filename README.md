@@ -51,14 +51,14 @@ Sequencing data can be processed using various published tools to demultiplex sa
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
 ```
-STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
+STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
 ```
 Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
 
 ### --Optimized STAR parameters
 Here is a brief explanation of the optimized parameters for non-continuous alignments. See the bioRxiv preprint referenced at the top of this README for more detailed discussion of the optimization. The output contains very short segments, down to 7nt, and the unreliable ones are removed later using alignment-span-based penalty and segment connection dependent filtering (`gaptypes.py`).
 
-* `--outFilterScoreMinOverLread 0` allows mapping short segments
+* `--outFilterScoreMinOverLread 0` and `--outFilterMatchNminOverLread 0` allows mapping short segments
 * `--outSAMattributes All` includes chimeric tags needed for alignment processing
 * `--outSAMtype BAM Unsorted SortedByCoordinate` simplifies subsequent SAM processing
 * `--alignIntronMin 1` shifts deletions (`D`) to gaps (`N`) to equalize penalty. 
@@ -70,7 +70,11 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 * `-- chimScoreDropMax 80`, a higher value, and `--chimNonchimScoreDropMin 20` ensures that chimera are not produced when normal gapped alignments are possible. 
 
 
-## Step 3: 
+## Step 3: Rearrange softclipped alignments and remap
+The STAR mapper, even with the optimized parameters discrimates against backward chimeric alignments compared to forward chimera (on the same strand and chromosome). To increase the detection of backward chimera, softclipped continuous alignments from the first round STAR mapping are rearranged so that they can be remapped by STAR in a second round. To rearrange softclipped continuous alignments, use the script softreverse.py as follows. The softrev.fastq file is mapped again using the parameters listed in Step 2. The output from the two rounds of STAR mappings are combined for subsequent analysis (Step 4). 
+```
+python softreverse.py input.sam softrev.fastq
+```
 
 
 ## Step 4: Classify alignments
