@@ -236,6 +236,10 @@ python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
 
 ## Step 9: Analysis of RNA homodimers
 The overlapping chimeric alignments indicate homotypic interactions, or RNA homodimers. The homo.sam file is further processed as follows to identify potential homodimers. 
+To ensure the identification of RNA homodimers using STAR mapping and gaptypes.py classification, the RNAs of interest must be flanked by additional non-N sequences. This condition is satisfied when the RNA is located in the middle of long sequence, or as a standalone mini-chromosome (i.e., the RNA itself), where additional sequences are padded to the 5’ or 3’ ends. For example, for RNAs with multiple gene copies in the genome, a single copy is taken out and padded with 100 “A” on each side. Homo alignments (homo.sam) with less than 2nt overlapping between two arms were filtered out to avoid potential artifacts. To plot the homodimers as heatmaps, use the following script:
+```
+python plot_heatmap_for_homodimer.py
+```
 
 
 ## Running CRSSANT as a pipeline
@@ -258,7 +262,7 @@ Before running `run_CRSSANT.py`, ensure that the following files are placed in a
 * Gene bed file should contain six required BED fileds: Chrom, ChromStart, ChromEnd, Name, Score, Strand.
 * GTF file, the annotation file containing the splicing junctions should be in GTF format.
 
-The output files from CRSSANT are gathered in four folders:
+The output files from run_CRSSANT.py are gathered in four folders:
 * alignments_classify: classified alignments (6 categories)
 * alignments_statistics: alignment statistics, containing segment and gap length distributions
 * alignments_DGs: created at step of DGs assembly
@@ -286,9 +290,6 @@ The following 2 files are produced for DG assembly.
 
 ### --Output folder 4: alignments_TGs
 TG clustering produces a sam file just like the gapm input sam file, except the addition of a new TG tag at the end of each alignment record. The output sam files can be converted to sorted bam for visualization on IGV. The TG tag can be used to group and sort alignments.
-
-
-
 
 
 ## END
