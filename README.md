@@ -10,11 +10,13 @@ CRSSANT is written in Python and available as source code that you can download 
 * [System requirements and tests](https://github.com/zhipenglu/CRSSANT#system-requirements-and-tests)
 * [Step 1: Preprocessing fastq input files](https://github.com/zhipenglu/CRSSANT#step-1-preprocessing-fastq-input-files)
 * [Step 2: Map reads to the genome](https://github.com/zhipenglu/CRSSANT#step-2-map-reads-to-the-genome)
-* [Step 3: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-3-classify-alignments)
-* [Step 4: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-4-segment-and-gap-statistics)
-* [Step 5: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-5-filter-spliced-and-short-gaps)
-* [Step 6: Cluster gap1 and trans alignments to DGs](https://github.com/zhipenglu/CRSSANT#step-6-cluster-gap1-and-trans-alignments-to-dgs)
-* [Step 7: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gapm-alignments-to-tgs)
+* [Step 3. Rearrange softclipped alignments and remap](https://github.com/zhipenglu/CRSSANT#step-3-rearrange-softclipped-alignments-and-remap)
+* [Step 4: Classify alignments](https://github.com/zhipenglu/CRSSANT#step-4-classify-alignments)
+* [Step 5: Segment and gap statistics](https://github.com/zhipenglu/CRSSANT#step-5-segment-and-gap-statistics)
+* [Step 6: Filter spliced and short gaps](https://github.com/zhipenglu/CRSSANT#step-6-filter-spliced-and-short-gaps)
+* [Step 7: Cluster gap1 and trans alignments to DGs](https://github.com/zhipenglu/CRSSANT#step-7-cluster-gap1-and-trans-alignments-to-dgs)
+* [Step 8: Cluster gapm alignments to TGs](https://github.com/zhipenglu/CRSSANT#step-8-cluster-gapm-alignments-to-tgs)
+* [Running CRSSANT as a pipeline](https://github.com/zhipenglu/CRSSANT#running-crssant-as-a-pipeline)
 
 ## Download and prepare environment
 Download the scripts and save it to a known path/location. No special installation is needed, but the python package dependencies need to be properly resolved before use. You will need Python version 3.6+ and the following Python packages. We recommend downloading the latest versions of these packages using the Ananconda/Bioconda package manager. Currently, the NetworkX version only works with python 3.6, but not higher versions.
@@ -45,7 +47,6 @@ Test datasets and example output files are provided for all steps except STAR ma
 Sequencing data can be processed using various published tools to demultiplex samples, and remove barcodes. Since each library preparation uses a different approach, we cannot recommend the same method for all of them. Here is an example of preprocessing PARIS data based on our recently published library preparation protocol. 
 
 
-
 ## Step 2: Map reads to the genome
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
@@ -69,7 +70,10 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 * `-- chimScoreDropMax 80`, a higher value, and `--chimNonchimScoreDropMin 20` ensures that chimera are not produced when normal gapped alignments are possible. 
 
 
-## Step 3: Classify alignments
+## Step 3: 
+
+
+## Step 4: Classify alignments
 In this step, alignments in the sam file are filtered to remove low-confidence segments, rearranged and classified into ![5 distinct types](figures/s3_noncon.pdf) using `gaptypes.py`. 
 ```
 python gaptypes.py input.sam output_prefix glenlog nprocs
@@ -105,7 +109,7 @@ Overlapping chimeric (homotypic, homo.sam): 281
 Bad alignments (bad.sam): 0
 ```
 
-## Step 4: Segment and gap statistics
+## Step 5: Segment and gap statistics
 Segment and gap length distribution can be produced using two scripts `seglendist.py` and `gaplendist.py` to help understand the quality and properties of the sequencing data. Both scripts either use the sam file to produce a list of numbers, or use a list of numbers from a file to produce the cumulative distribution histogram. This step is not required for the subsequent steps; it only provides information to assess data quality. 
 
 Example command for creating the gap length list is as follows, where input.sam can be gap1.sam and gapm.sam, or their filtered output where splicing junctions and/or short gaps have been removed. 
@@ -119,7 +123,7 @@ python seglendist.py inputfile filetype outputfile
 When input is sam, output is list file. When input is a file of lengths list, output is pdf figure. The percentage of gaps or segments within a certain range can are output as well when running these scripts. The figure output can be adjusted by changing parameters in the python script. 
 
 
-## Step 5: Filter spliced and short gaps
+## Step 6: Filter spliced and short gaps
 Output files `gap1.sam` and `gapm.sam` may contain alignments that have only splicing junctions and short 1-2 nt gaps due to artifacts. These are filtered out using `gapfilter.py` before further processing. Splicing junctions and short gaps in other output files can be safely ignored. The `annotation` file containing the splicing junctions should be in GTF format. `idloc`, location of the transcript_ID field, is usually field 11. `short` is set to either `yes` which means 'remove short 1-2nt gaps', or `no`, which means 'ignore short 1-2nt gaps'.  
 ```
 python gapfilter.py annotation insam outsam idloc short
@@ -149,7 +153,7 @@ Alignments with at least 2 good gaps: 0
 Number of annotated splicing junctions: 5
 ```
 
-## Step 6: Cluster gap1 and trans alignments to DGs
+## Step 7: Cluster gap1 and trans alignments to DGs
 After filtering alignments, To assemble alignments to DGs and NGs using the crssant.py script, three types of input files are required, `alignfile`, `genesfile` and `bedgraphs`. For more on these parameters, see the explanation below and the bioRxiv preprint referenced at the top of this README. 
 ```
 python crssant.py [-h] [-out OUT] [-cluster CLUSTER] [-n N] [-covlimit COVLIMIT] [-t_o T_O] [-t_eig T_EIG] alignfile genesfile bedgraphs
@@ -209,7 +213,7 @@ sortBed -i ACTB.cliques.t_o0.1_dg.bed > ACTB.cliques.t_o0.1_dg_sorted.bed
 ```
 
 
-## Step 7: Cluster gapm alignments to TGs
+## Step 8: Cluster gapm alignments to TGs
 After assembly of DGs from single-gap or two-segment alignments (including gap1 and trans), the DGs are used as the foundation to assemble tri-segment groups (TGs) from gapm alignments (only 3-segment ones are assembled at the moment, since reads with more than 3 segments are extremely rare). 
 
 ### --Required input files
@@ -223,5 +227,8 @@ Here is an example test of the `gapmcluster.py` script for TG assembly, using da
 ```
 python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
 ```
+
+## Running CRSSANT as a pipeline
+
 
 ## END
