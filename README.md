@@ -51,7 +51,7 @@ Sequencing data can be processed using various published tools to demultiplex sa
 It is assumed that the reads have been demultiplexed and adapters removed. Before mapping the reads, genome indices should be generated with the same STAR version. Reads in the fastq format are mapped to the genome using STAR and a set of optimized parameters as follows. `runThreadN` and `genomeLoad` should be adjusted based on available resources and running environment.  
 
 ```
-STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
+STAR --runMode alignReads --genomeDir /path/to/index --readFilesIn /path/to/reads/files --outFileNamePrefix /path/to/output/prefix --runThreadN 1 --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimFilter None --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 -- chimScoreDropMax 80 --chimNonchimScoreDropMin 20
 ```
 Successful STAR mapping generates the following 7 files: `Aligned.out.bam`, `Aligned.sortedByCoord.out.bam`, `Log.final.out`, `Log.out`, `Log.progress.out`, `SJ.out.tab`, and `Unmapped.out.mate1`. The `bam` file is converted back to `sam` for the next step of processing, keeping the header lines (`samtools view -h`). Sorting is not necessary for the next alignment classification step.  
 
@@ -64,6 +64,7 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 * `--alignIntronMin 1` shifts deletions (`D`) to gaps (`N`) to equalize penalty. 
 * `--scoreGap* 0` removes all gap open penalty.
 * `--scoreGenomicLengthLog2scale -1` increases alignment span-based penalty
+* `--chimFilter None` enables detection of chimeric alignments (primarily homotypic) near the 5' and 3' ends of references
 * `--chimOutType WithinBAM HardClip` output alignments in one file and removes hardclips. 
 * `--chimSegmentMin 5` and `--chimJunctionOverhangMin 5` map chimera more permissively
 * `--chimScoreJunctionNonGTAG 0` removes penalty for splicing junctions in chimera
@@ -236,7 +237,14 @@ python gapmcluster.py RN7SK_hg38_manualDGs.bedpe RN7SK_hg38_gapm.sam
 
 ## Step 9: Analysis of RNA homodimers
 The overlapping chimeric alignments indicate homotypic interactions, or RNA homodimers. The homo.sam file is further processed as follows to identify potential homodimers. 
-To ensure the identification of RNA homodimers using STAR mapping and gaptypes.py classification, the RNAs of interest must be flanked by additional non-N sequences. This condition is satisfied when the RNA is located in the middle of long sequence, or as a standalone mini-chromosome (i.e., the RNA itself), where additional sequences are padded to the 5’ or 3’ ends. For example, for RNAs with multiple gene copies in the genome, a single copy is taken out and padded with 100 “A” on each side. Homo alignments (homo.sam) with less than 2nt overlapping between two arms were filtered out to avoid potential artifacts. To plot the homodimers as heatmaps, use the following script:
+To ensure the identification of RNA homodimers using STAR mapping and gaptypes.py classification, the RNAs of interest must be flanked by additional non-N sequences, or the `--chimFilter None` option needs to be set. Homo alignments (homo.sam) with less than 2nt overlapping between two arms were filtered out to avoid potential artifacts. To cluster overlapping alignments into groups with similar DG/NG tags as the gap1/trans alignments, the crssant.py script is applied as follows. The input and output files are similar to the descriptions above. 
+
+```
+python crssant.py [-h] [-out OUT] [-cluster CLUSTER] [-n N] [-covlimit COVLIMIT] [-t_o T_O] [-t_eig T_EIG] alignfile genesfile bedgraphs
+```
+
+To plot the homodimers as heatmaps, use the following script:
+
 ```
 python plot_heatmap_for_homodimer.py
 ```
