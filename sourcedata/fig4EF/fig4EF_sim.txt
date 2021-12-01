@@ -1,4 +1,4 @@
-Fig. 4CD. Output numbers divided by input numbers are used in Fig. 4C to calculate assignment of alignments to DGs. DGs numbers divided by 100 are used in Fig. 4D to calculate fraction of assembled DGs. 
+Fig. 4EF. Output numbers divided by input numbers are used in Fig. 4E to calculate assignment of alignments to DGs. DGs numbers divided by 100 are used in Fig. 4F to calculate fraction of assembled DGs. 
 
 cliques core=5
 t_o,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9
