@@ -1,4 +1,4 @@
-Supplemental Fig. 6D. 
+Supplemental Fig. 7D. 
 The simulation and CRSSANT clustering runs are the same as in Fig. 4C-D. Here, the wallclock time is recorded for each run as follows. 
 
 cliques core=5 
