@@ -70,6 +70,11 @@ Here is a brief explanation of the optimized parameters for non-continuous align
 * `--chimScoreJunctionNonGTAG 0` removes penalty for splicing junctions in chimera
 * `-- chimScoreDropMax 80`, a higher value, and `--chimNonchimScoreDropMin 20` ensures that chimera are not produced when normal gapped alignments are possible. 
 
+### --Other relevant parameters
+In addition to the parameters listed above, the following ones need to be adjusted according to the data. Larger datasets may produce more gapped alignments (similar to splice junctions) and therefore requires higher limits. Even higher numbers can be tried if the following recommended numbers are still insufficient. 
+* `--limitOutSJcollapsed`: recommended 10,000,000 (default 1 million)
+* `--limitIObufferSize`: recommended 1,500,000,000 (default 150 million)
+
 
 ## Step 3: Rearrange softclipped alignments and remap
 The STAR mapper, even with the optimized parameters discrimates against backward chimeric alignments compared to forward chimera (on the same strand and chromosome). To increase the detection of backward chimera, softclipped continuous alignments from the first round STAR mapping are rearranged so that they can be remapped by STAR in a second round. To rearrange softclipped continuous alignments, use the script softreverse.py as follows. The softrev.fastq file is mapped again using the parameters listed in Step 2. The output from the two rounds of STAR mappings are combined for subsequent analysis (Step 4). 
