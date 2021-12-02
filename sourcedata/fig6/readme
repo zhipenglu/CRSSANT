@@ -1,0 +1,3 @@
+Data for homodimers from PARIS1_bc07 sample
+commandline: 
+python crssant.py -cluster cliques -t_o 0.1 -out ./ PARIS1_bc07_map2hg38genmaskadd_homo.sam genrefdfamadd_gene.bed  plus.bedgraph,minus.bedgraph
