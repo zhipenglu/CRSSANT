@@ -1,0 +1,13 @@
+For ROC curve for dsRNA:
+python plotROC_dsRNA.py PARIS_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 5 Reads PARIS
+python plotROC_dsRNA.py COMRADES_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 5 Reads COMRADES
+python plotROC_dsRNA.py LIGR_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 5 Reads LIGR
+python plotROC_dsRNA.py RIC_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 5 Reads RIC
+python plotROC_dsRNA.py SPLASH_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 5 Reads SPLASH
+
+For heatmap:
+python plotHeatmap_dsRNA.py PARIS_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 20 Reads PARIS
+python plotHeatmap_dsRNA.py COMRADES_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 20 Reads COMRADES
+python plotHeatmap_dsRNA.py LIGR_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 20 Reads LIGR
+python plotHeatmap_dsRNA.py RIC_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 20 Reads RIC
+python plotHeatmap_dsRNA.py SPLASH_03M_crssant.cliques.t_o0.2.sam hs45.arc_all.bed 10 20 Reads SPLASH
