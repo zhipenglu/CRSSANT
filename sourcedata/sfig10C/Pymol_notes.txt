@@ -1,0 +1,16 @@
+
+sfig10C:
+TG:Z:28S,28S,3,0.071_1621_28S,28S,20,0.283_6441
+
+
+reinitialize; fetch 4V6X; hide; cartoon dumbbell; bg_color white;
+select arm1, resi 2915-2929 in chain A5; color red,  arm1; show cartoon, arm1; 
+select arm2, resi 2933-2954 in chain A5; color blue, arm2; show cartoon, arm2;
+select arm3, resi 3251-3279 in chain A5; color magenta, arm3; show cartoon, arm3;
+set_view (\
+    -0.034528747,    0.890959859,   -0.452766359,\
+     0.957056820,    0.159953624,    0.241771355,\
+     0.287831515,   -0.424975485,   -0.858223617,\
+    -0.000144288,    0.000006616, -399.948760986,\
+    28.282642365,   57.943725586,   87.806983948,\
+  -18739.912109375, 19539.818359375,  -20.000000000 )
