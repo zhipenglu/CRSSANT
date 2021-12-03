@@ -1,0 +1,8 @@
+
+sfig10B:
+TG:Z:28S,28S,40,0.415_549_28S,28S,42,0.390_557
+
+reinitialize; fetch 4V6X; hide; cartoon dumbbell; bg_color white;
+select arm1, resi 4073-4090 in chain A5; color red,  arm1; show cartoon, arm1; 
+select arm2, resi 4104-4133 in chain A5; color blue, arm2; show cartoon, arm2;
+select arm3, resi 4153-4177 in chain A5; color magenta, arm3; show cartoon, arm3;
