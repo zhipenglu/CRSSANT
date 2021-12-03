@@ -1,0 +1,14 @@
+
+sfig10E U1-U1-U1 gapm
+
+reinitialize; fetch 7b0y; bg_color white; cartoon dumbbell
+select arm1, resi 46-55 in chain a; color red, arm1; show cartoon, arm1;
+select arm2, resi 46-55 in chain a; color blue, arm2; show cartoon, arm2;
+select arm3, resi 46-55 in chain a; color magenta, arm3; show cartoon, arm3;
+set_view (\
+    -0.039365467,    0.729671121,   -0.682654917,\
+    -0.981256723,    0.100732267,    0.164251447,\
+     0.188614741,    0.676332355,    0.712032735,\
+    -0.000465035,   -0.001100242, -278.462554932,\
+   115.725189209,  167.260131836,  169.427246094,\
+  -85356.570312500, 85913.539062500,  -20.000000000 )
