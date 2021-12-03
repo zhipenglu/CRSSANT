@@ -1,1 +1,36 @@
-Fig. 2A. 
+The following folders include both the source data and the scripts used to plot them. 
+
+DGs_5methods: CRSSANT-assembled DGs for the 5 crosslink-ligation methods analyzed in this paper. 
+Fig. 1. N/A
+Fig. 2A-B. bed file for human rRNA and snRNA helices
+Fig. 2GHIJ. alignment counts for the benchmarking of 4 methods on simulated reads. 
+Fig. 2K. alignment counts for the benchmarking of 4 methods on real crosslink-ligation data
+Fig. 2LM. BAM file for the alignments. 
+Fig. 3E. summary of alignment numbers for the crosslink-ligation data using optimized STAR
+Fig. 4EF. performance of CRSSANT on simulated DGs. 
+Fig. 4G. complete datasets are in Supplemental Fig. 5C-D
+Fig. 4HIJ. human U2 snRNA model and PARIS data from human and mouse cells
+Fig. 4K. human U2 SHARC data
+Fig. 5E. 28S rRNA TG coverage before and after shuffling. 
+Fig. 5F. 28S rRNA DG and TG coverages before and after shuffling
+Fig. 6CDE. RNA homodimers data. 
+
+Supplemental Fig. 1. benchmarking 4 mapping methods on simulated reads. 
+Supplemental Fig. 2EF. nucleotide bias in short gaps
+Supplemental Fig. 2G. benchmarking 4 mapping methods on real crosslink-ligation reads.  
+Supplemental Fig. 3. N/A
+Supplemental Fig. 4. N/A
+Supplemental Fig. 5C. benchmarking CRSSANT on simulated alignments, cliques algorithm
+Supplemental Fig. 5D. benchmarking CRSSANT on simulated alignments, spectral algorithm
+Supplemental Fig. 6A-D. comparing simulated and CRSSANT-assembled DGs. 
+Supplemental Fig. 7A. simulated DG BAM files with varying coverages
+Supplemental Fig. 7B. numbers on the right of the plot
+Supplemental Fig. 7C. numbers on the right of the plot
+Supplemental Fig. 7D. wall clock time for CRSSANT clustering 
+Supplemental Fig. 8G. human U3 SHARC data
+Supplemental Fig. 9. testing CRSSANT on the rRNA using published crosslink-ligation data
+Supplemental Fig. 10. gapm more data other RNAs. 
+Supplemental Fig. 11. N/A
+Supplemental Fig. 12. data are in the fig. 6 folder
+Supplemental Fig. 13. picornavirus homodimers
+Supplemental Fig. 14C. quantification of the homodimer RT-PCR. 
