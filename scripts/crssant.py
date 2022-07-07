@@ -133,16 +133,16 @@ def getgenes(genesfile):
     print("genesdict size:", intvlcount)
     return genesdict    
 
-def line2info(line):
+def line2info(line,genesdict):
     """convert 1 chimeric alignment line to a list of information"""
-    align=line.split('\n')
+    align=line.split()
     RNAME,POS,CIGAR=align[2],int(align[3]),align[5]
     Rlen=sum([int(i[:-1]) for i in re.findall('\d+[MD=X]',CIGAR)])
     STRAND='-' if '{0:012b}'.format(int(align[1]))[-5]=='1' else '+'
     info = [RNAME,STRAND,POS,POS+Rlen,line,[]]
     for i in [floor(POS/10)*10,ceil((POS+Rlen)/10)*10]:
         if (RNAME,STRAND,i) in genesdict:
-            info[-1].append(genesdict[(RNAME,STRAND,i)])
+            info[-1].extend(genesdict[(RNAME,STRAND,i)])
     return info #[RNAME,STRAND,POS,POS+Rlen,line,[names]]
         
 def getalign(readsdict, genesdict):
@@ -161,7 +161,7 @@ def getalign(readsdict, genesdict):
         lines = readsdict[QNAME] #all alignments for this read
         if lines[0].split()[-1][:2]=='SA': #SA:Z:RNAME,POS,STRAND,CIGAR,MAPQ,NM;
             alignid = lines[0].split()[0]
-            info1,info2 = line2info(lines[0]),line2info(lines[1])
+            info1,info2 = line2info(lines[0],genesdict),line2info(lines[1],genesdict)
             aligndict[alignid] = info1+info2; continue
         linecount=0 
         for line in lines: #now reads from gap1.sam, normal alignment with 1 gap
