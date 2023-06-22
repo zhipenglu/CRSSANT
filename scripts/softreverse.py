@@ -69,7 +69,7 @@ for line in insam:
             QUAL = QUAL[softslen[0]:] + QUAL[:softslen[0]]
         elif 'S' not in subMS[0] and 'S' in subMS[-1]:
             SEQ = SEQ[-softslen[0]:] + SEQ[:-softslen[0]]
-            QUAL = SEQ[-softslen[0]:] + SEQ[:-softslen[0]]
+            QUAL = QUAL[-softslen[0]:] + QUAL[:-softslen[0]]
         elif 'S' in subMS[0] and 'S' in subMS[-1]:
             SEQ = SEQ[-softslen[1]:] + \
                   SEQ[softslen[0]:-softslen[1]] + SEQ[:softslen[0]] 
