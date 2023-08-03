@@ -115,7 +115,7 @@ glenlog = float(sys.argv[3]) #default -1. Need to test the parameters.
 minlen = int(sys.argv[4]) #min length for segment to be in the junction database
 npro = int(sys.argv[5]) #number of processors to use
 nonconreads = {} #dictionary to store all noncontinuous reads. need large memory
-inputsam = open(inputfile, 'r'); del inputfile
+inputsam = open(inputfile, 'r'); #del inputfile
 inputcount = 0 #total number of reads in the file
 contalign = [] #nongapped continuous alignments, due to failure in ligation
 contsam = open(outprefix + 'cont.sam', 'w')
@@ -781,6 +781,7 @@ logfile.write(logstr); print logstr,
 
 logstr= \
 "              Total input alignment number: " + str(inputcount) + '\n' + \
+"                     Number of connections: " + str(len(connect))+'\n' + \
 "           Continuous alignments (no gaps): " + str(contcount) + '\n' + \
 "             Two-segment gapped alignments: " + str(gap1count) + '\n' + \
 "           Multi-segment gapped alignments: " + str(gapmcount) + '\n' + \
