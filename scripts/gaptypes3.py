@@ -947,7 +947,7 @@ def processOverlappingChimericAlignments(QNAME, chimoveralign):
 
 
 def classifyAlignments(QNAME, alignments):
-    global tempcount
+    global tempcount, nonpaircount
         
     #simple object to classify for this read QNAME
     #alignclasses = {}
@@ -974,7 +974,7 @@ def classifyAlignments(QNAME, alignments):
         return
     
     if(len(alignments)!=2): 
-      print(QNAME,"read has ",len(alignments), " alignments");
+      #print(QNAME,"read has ",len(alignments), " alignments");
       nonpaircount += 1 #count the reads which are not pairs
       for t_align in alignments: nonpairbam.write(t_align);
       return
@@ -1048,7 +1048,7 @@ for align in inputbam:
         difftime = (t_time-starttime).seconds
         rate = (inputcount / difftime) * 60
         rate2 = (readcount / difftime) * 60
-        logmsg(timenow()+" Phase1-connections aligns:"+f"{inputcount:,}"+ "  aligns/min:"+ f"{math.floor(rate):,}" +\
+        logmsg(timenow()+" Pass1: aligns:"+f"{inputcount:,}"+ "  aligns/min:"+ f"{math.floor(rate):,}" +\
           "  reads:"+f"{readcount:,}"+"  reads/min:"+ f"{math.floor(rate2):,}" +"\n");
 
     QNAME = align.query_name  #line[0]
@@ -1119,29 +1119,23 @@ buildConnections(current_qname, current_aligns)
 noncontinuous_count+= len(current_aligns)
 
 
-#logmsg("finished read inputbam loop\n")
+#logmsg("finished Pass1 read inputbam loop\n")
 #logmsg("  input:%1.3fmil\n"%(inputcount/1000000))
 #logmsg("  continuous alignments:%1.3fmil\n"%(continuous_count/1000000));
 #logmsg("  noncontinuous alignments:%1.3fmil\n"%(noncontinuous_count/1000000));
 #logmsg("  noncontinuous reads:%1.3fmil\n"%(readcount/1000000));
 #logmsg("  badreads:%1.3fmil\n"%(badcount/1000000));
 
-"""
 endtime = datetime.now()
-#print("finished reading inputbam in %1.3f seconds\n" % ((endtime-starttime).seconds))
-logstr= "finished read inputbam loop1 in %1.3f seconds\n"% ((endtime-starttime).seconds) + \
+#print("finished PASS1 reading inputbam in %1.3f seconds\n" % ((endtime-starttime).seconds))
+logstr= "finished PASS1 read inputbam loop1 in %1.3f seconds\n"% ((endtime-starttime).seconds) + \
 "              Total input alignment number: " + str(inputcount) + '\n' + \
 "                     Number of connections: " + str(len(connections))+'\n' + \
 "           Continuous alignments (no gaps): " + str(continuous_count) + '\n' + \
-"             Two-segment gapped alignments: " + str(gap1count) + '\n' + \
-"           Multi-segment gapped alignments: " + str(gapmcount) + '\n' + \
-"        Other chimeric (different str/chr): " + str(rricount) + '\n' + \
-"          Overlapping chimeric (homotypic): " + str(homocount) + '\n' + \
 "                            Bad alignments: " + str(badcount) + '\n' + \
 "                 Non-Continuous alignments: " + str(noncontinuous_count) + " ("+str(t_noncont_count)+')\n' + \
-"                      non-continuous reads: " + str(readcount) + '\n'
+"                      non-continuous reads: " + str(readcount) + '\n\n'
 logmsg(logstr)
-"""
 
 #inputbam.close()
 noncontbam.close()
@@ -1234,16 +1228,17 @@ logstr=timenow()+" Finished gaptypes.py successfully\n\n"
 logmsg(logstr)
 
 logstr= \
-"              Total input alignment number: " + str(inputcount) + '\n' + \
-"                     Number of connections: " + str(len(connections))+'\n' + \
-"           Continuous alignments (no gaps): " + str(continuous_count) + '\n' + \
-"             Two-segment gapped alignments: " + str(gap1count) + '\n' + \
-"           Multi-segment gapped alignments: " + str(gapmcount) + '\n' + \
-"        Other chimeric (different str/chr): " + str(rricount) + '\n' + \
-"          Overlapping chimeric (homotypic): " + str(homocount) + '\n' + \
-"                     Bad homopolymer reads: " + str(badcount) + '\n' + \
-"                 Non-Continuous alignments: " + str(noncontinuous_count) +"+"+ str(badAlignCount) + " = ("+str(t_noncont_count)+')\n' + \
-"                      non-continuous reads: " + str(readcount) + '\n\n'
+"                 Total input alignment number: " + str(inputcount) + '\n' + \
+"                        Number of connections: " + str(len(connections))+'\n' + \
+"cont          Continuous alignments (no gaps): " + str(continuous_count) + '\n' + \
+"gap1            Two-segment gapped alignments: " + str(gap1count) + '\n' + \
+"gapm          Multi-segment gapped alignments: " + str(gapmcount) + '\n' + \
+"rri        Other chimeric (different str/chr): " + str(rricount) + '\n' + \
+"homo         Overlapping chimeric (homotypic): " + str(homocount) + '\n' + \
+"bad                     Bad homopolymer reads: " + str(badcount) + '\n' + \
+"nonpair                   non-pair read count: " + str(nonpaircount) + '\n' + \
+"noncont             Non-Continuous alignments: " + str(noncontinuous_count) +"+"+ str(badAlignCount) + " = ("+str(t_noncont_count)+')\n' + \
+"                         non-continuous reads: " + str(readcount) + '\n\n'
 t_time = datetime.now()
 runtime = (t_time-starttime0).seconds
 
