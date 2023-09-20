@@ -141,7 +141,7 @@ skipjunctions = False
 if(args.glenlog != None):
     glenlog = args.glenlog
     #print("mode maxreads",max_reads)
-if(args.minlen != None): minlen = args.minlen
+if(args.minlen != None): minlen = args.minlen; print("minlen =",minlen)
 if(args.maxlen != None): maxlen = args.maxlen
 if(args.npro != None): npro = args.npro
 if(args.skipjunctions != None): skipjunctions = args.skipjunctions
@@ -164,6 +164,7 @@ if(skipjunctions): print("skipjunctions")
 
 nonconreads = {} #dictionary to store all noncontinuous reads. need large memory
 
+starttime0 = datetime.now()
 starttime = datetime.now()
 if(inputfile.endswith("sam")):
     print(inputfile," is SAM")
@@ -204,6 +205,9 @@ homocount = 0
 
 badbam = pysam.AlignmentFile(outprefix+"bad.bam", "wb", template=inputbam)
 badcount = 0 #bad alignments: homopolymers, chimeric with additional N/I, etc
+
+nonpairbam = pysam.AlignmentFile(outprefix+"nonpair.bam", "wb", template=inputbam)
+nonpaircount = 0 #reads which do not match expections of being a pair, either only 1 or >2
 
 tempcount = 0
 connections = {} #connections is a dictionary of all reliable connections
@@ -969,6 +973,13 @@ def classifyAlignments(QNAME, alignments):
         processGappedAlignments(QNAME, gapalign)
         return
     
+    if(len(alignments)!=2): 
+      print(QNAME,"read has ",len(alignments), " alignments");
+      nonpaircount += 1 #count the reads which are not pairs
+      for t_align in alignments: nonpairbam.write(t_align);
+      return
+
+      
     ##############D. process chimera to collect long intvls. 
     #remaining chimera may be on diff chr or strands with more gaps
     t_align1, t_align2 = tuple(alignments)
@@ -1217,6 +1228,7 @@ gapmbam.close()
 rribam.close()
 homobam.close()
 badbam.close()
+nonpairbam.close()
 
 logstr=timenow()+" Finished gaptypes.py successfully\n\n"
 logmsg(logstr)
@@ -1231,7 +1243,16 @@ logstr= \
 "          Overlapping chimeric (homotypic): " + str(homocount) + '\n' + \
 "                     Bad homopolymer reads: " + str(badcount) + '\n' + \
 "                 Non-Continuous alignments: " + str(noncontinuous_count) +"+"+ str(badAlignCount) + " = ("+str(t_noncont_count)+')\n' + \
-"                      non-continuous reads: " + str(readcount) + '\n'
+"                      non-continuous reads: " + str(readcount) + '\n\n'
+t_time = datetime.now()
+runtime = (t_time-starttime0).seconds
+
+if(runtime>3600):
+  logstr += "total runtime "+ f"{(runtime/3600.0):,.1f}" + " hours\n"  
+elif(runtime <200):
+  logstr += "total runtime "+ f"{runtime:,.1f}" + " seconds\n"
+else:
+  logstr += "total runtime "+ f"{(runtime/60.0):,.1f}" + " minutes\n"
 
 logmsg(logstr)
 logfile.close()
