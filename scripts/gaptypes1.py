@@ -579,8 +579,10 @@ del gapalign
 #input: chimdiscalign dictionary. output: contalign, gap1align, gapmalign
 
 logstr=timenow()+" Processing discrete chimera ...\n"
+print "gap1count: ", gap1count    
 logfile.write(logstr); print logstr,
 chimdiscpair = {} #store the alignments to process forward and backward later
+chimdiscpair_count=0
 tempcount=0
 for QNAME in chimdiscalign:
     tempcount+=1
@@ -605,6 +607,7 @@ for QNAME in chimdiscalign:
     intvls = tointerval(lineL) + tointerval(lineR)
     if all(map(lambda x:x[4]>=minlen,intvls))or plusshortL>=0 and plusshortR>=0:
         chimdiscpair[QNAME] = [lineL,lineR]
+        chimdiscpair_count+=1
         continue
 
     ###B. check remaining chimera against "connect", trim SH and bad segments
@@ -629,8 +632,13 @@ for QNAME in chimdiscalign:
         if len(goodsegs)==1: contalign.append(linenew); contcount+=1
         elif len(goodsegs)==2: gap1align.append(linenew); gap1count+=1
         else: gapmalign.append(linenew); gapmcount+=1
-    else: chimdiscpair[QNAME] = [linenewL,linenewR] #both sides remained
-    
+    else: 
+        chimdiscpair[QNAME] = [linenewL,linenewR] #both sides remained
+        chimdiscpair_count+=1
+        
+#print "chimdiscpair_count: ", chimdiscpair_count
+#print "len(chimdiscpair): ", len(chimdiscpair)
+print "gap1count: ", gap1count    
 
 ###now process all discrete chimera to arrange the backward or forward ones
 #The bad segments have already been trimmed previously
@@ -673,7 +681,8 @@ for QNAME in chimdiscpair:
     gaps = re.findall('\d+N', CIGARB)
     if len(gaps)==1: gap1align.append('\t'.join(alignB)); gap1count+=1
     else: gapmalign.append('\t'.join(alignB)); gapmcount+=1
-    
+
+print "gap1count: ", gap1count    
 del chimdiscalign, chimdiscpair
 ################################################################################
 ################################################################################
