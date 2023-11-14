@@ -136,7 +136,7 @@ def getreads(alignfile): #verified
     print("Number of reads:", readcount)
     print("Number of alignments:", aligncount)
     #samheader = ''.join(header)
-    samheader = inputbam.AlignmentFile.text
+    samheader = inputbam.text
     return readsdict, samheader
 
 
