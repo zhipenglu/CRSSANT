@@ -256,7 +256,7 @@ def getgenes(genesfile):
 
 def line2info(line):
     """convert 1 chimeric alignment line to a list of information"""
-    align=line.split('\n')
+    align=line.split('\t')
     RNAME,POS,CIGAR=align[2],int(align[3]),align[5]
     Rlen=sum([int(i[:-1]) for i in re.findall('\d+[MD=X]',CIGAR)])
     STRAND='-' if '{0:012b}'.format(int(align[1]))[-5]=='1' else '+'
