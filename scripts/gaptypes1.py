@@ -115,6 +115,7 @@ glenlog = float(sys.argv[3]) #default -1. Need to test the parameters.
 minlen = int(sys.argv[4]) #min length for segment to be in the junction database
 npro = int(sys.argv[5]) #number of processors to use
 nonconreads = {} #dictionary to store all noncontinuous reads. need large memory
+noncontinuous_count = 0
 inputsam = open(inputfile, 'r'); #del inputfile
 inputcount = 0 #total number of reads in the file
 contalign = [] #nongapped continuous alignments, due to failure in ligation
@@ -332,6 +333,27 @@ def trimclip2line(line): #this function returns the new alignment in a string
         SEQnew,QUALnew=SEQnew[:-int(ops[-1][:-1])],QUALnew[:-int(ops[-1][:-1])]
     for (i,new) in [(5,CIGARnew),(9,SEQnew),(10,QUALnew)]: alignnew[i]=new
     return '\t'.join(alignnew)
+  
+def longIntervalsToConnections(intvlslong):
+    #logstr=timenow()+" Building connections ...\n"
+    #logfile.write(logstr); print logstr,
+    #tempcount=0
+    #for intvlslong in intvlslongall:
+        #tempcount+=1
+        #if not tempcount%100000:
+        #    logstr=timenow()+" Built connections for "+str(tempcount)
+        #    logfile.write(logstr+" alignments...\n");print logstr +" alignments..."
+    grids=[] #eg.[[(chr1,'+',5),(chr1,'+',10)],[(chr2,'+',5),(chr2,'+',10)]]
+    for intvl in intvlslong:
+        POSs = [i for i in range(intvl[2]-4,intvl[3]+5) if not i%5]
+        grids.append([(intvl[0],intvl[1],i) for i in POSs])
+    for i,j in itertools.product(range(len(grids)),range(len(grids))):
+        if i==j: continue
+        for m,n in itertools.product(grids[i],grids[j]): connect[m+n]=''
+    #del intvlslongall
+    #logstr=timenow()+" Number of connections: " +str(len(connect))+'\n'
+    #logfile.write(logstr); print logstr,
+
 
 ################################################################################
 ################################################################################
@@ -363,7 +385,7 @@ contsam.write(header); gap1sam.write(header); gapmsam.write(header)
 homosam.write(header); rrisam.write(header); badsam.write(header)
 if "SA:Z:" not in firstline.split()[-1] and 'N' not in firstline.split()[5]:
     contalign.append(line); contcount+=1
-else: nonconreads[firstline.split()[0]]=[firstline]
+else: nonconreads[firstline.split()[0]]=[firstline]; noncontinuous_count+=1
 del firstline, header
 
 for line in inputsam: #############store alignments in a dictionary, key=QNAME
@@ -374,8 +396,8 @@ for line in inputsam: #############store alignments in a dictionary, key=QNAME
         logfile.write(logstr); print logstr,
     if "SA:Z:" not in line.split()[-1] and 'N' not in line.split()[5]:
         contalign.append(line); contcount+=1; continue
-    if line.split()[0] in nonconreads: nonconreads[line.split()[0]].append(line)
-    else: nonconreads[line.split()[0]]=[line]
+    if line.split()[0] in nonconreads: nonconreads[line.split()[0]].append(line); noncontinuous_count+=1
+    else: nonconreads[line.split()[0]]=[line]; noncontinuous_count+=1
 logstr=timenow()+" Total alignments: "+ str(inputcount) + '\n'
 logfile.write(logstr); print logstr,
 inputsam.close()
@@ -437,7 +459,9 @@ for QNAME in nonconreads:
         for line in nonconreads[QNAME]:
             intvls = tointerval(line) #get all intervals, regardless of size
             intvlslong = [intvl for intvl in intvls if intvl[4]>=minlen]
-            if len(intvlslong)>=2: intvlslongall.append(intvlslong)
+            if len(intvlslong)>=2: 
+                #intvlslongall.append(intvlslong)
+                longIntervalsToConnections(intvlslong)
         continue
     
     ##############D. process chimera to collect long intvls. 
@@ -450,11 +474,14 @@ for QNAME in nonconreads:
     else: chimdiffalign[QNAME] = nonconreads[QNAME]
     intvls=tointerval(line1)+tointerval(line2) #[RNAME,STRAND,LEFT,RIGHT,LEN]
     intvlslong = [intvl for intvl in intvls if intvl[4]>=minlen]
-    if len(intvlslong)>=2: intvlslongall.append(intvlslong)
+    if len(intvlslong)>=2: 
+        #intvlslongall.append(intvlslong)
+        longIntervalsToConnections(intvlslong)
 del nonconreads
 
 
 ##############E. establish the connections in 5nt intervals
+"""
 logstr=timenow()+" Building connections ...\n"
 logfile.write(logstr); print logstr,
 tempcount=0
@@ -473,6 +500,7 @@ for intvlslong in intvlslongall:
 del intvlslongall
 logstr=timenow()+" Number of connections: " +str(len(connect))+'\n'
 logfile.write(logstr); print logstr,
+"""
 
 """
 #check objects at the moment
@@ -531,6 +559,8 @@ for QNAME in gapalign:
         if len(segs)-len(badsegs)<=1:contalign.append(linenew);contcount+=1
         elif len(segs)-len(badsegs)==2:gap1align.append(linenew);gap1count+=1
         else: gapmalign.append(linenew); gapmcount+=1
+logstr=timenow()+" Finished gapped alignments ... "+str(tempcount)+"\n"
+logfile.write(logstr); print logstr,
 del gapalign
 ################################################################################
 ################################################################################
@@ -549,8 +579,10 @@ del gapalign
 #input: chimdiscalign dictionary. output: contalign, gap1align, gapmalign
 
 logstr=timenow()+" Processing discrete chimera ...\n"
+print "gap1count: ", gap1count    
 logfile.write(logstr); print logstr,
 chimdiscpair = {} #store the alignments to process forward and backward later
+chimdiscpair_count=0
 tempcount=0
 for QNAME in chimdiscalign:
     tempcount+=1
@@ -575,6 +607,7 @@ for QNAME in chimdiscalign:
     intvls = tointerval(lineL) + tointerval(lineR)
     if all(map(lambda x:x[4]>=minlen,intvls))or plusshortL>=0 and plusshortR>=0:
         chimdiscpair[QNAME] = [lineL,lineR]
+        chimdiscpair_count+=1
         continue
 
     ###B. check remaining chimera against "connect", trim SH and bad segments
@@ -599,8 +632,13 @@ for QNAME in chimdiscalign:
         if len(goodsegs)==1: contalign.append(linenew); contcount+=1
         elif len(goodsegs)==2: gap1align.append(linenew); gap1count+=1
         else: gapmalign.append(linenew); gapmcount+=1
-    else: chimdiscpair[QNAME] = [linenewL,linenewR] #both sides remained
-    
+    else: 
+        chimdiscpair[QNAME] = [linenewL,linenewR] #both sides remained
+        chimdiscpair_count+=1
+        
+#print "chimdiscpair_count: ", chimdiscpair_count
+#print "len(chimdiscpair): ", len(chimdiscpair)
+print "gap1count: ", gap1count    
 
 ###now process all discrete chimera to arrange the backward or forward ones
 #The bad segments have already been trimmed previously
@@ -643,7 +681,8 @@ for QNAME in chimdiscpair:
     gaps = re.findall('\d+N', CIGARB)
     if len(gaps)==1: gap1align.append('\t'.join(alignB)); gap1count+=1
     else: gapmalign.append('\t'.join(alignB)); gapmcount+=1
-    
+
+print "gap1count: ", gap1count    
 del chimdiscalign, chimdiscpair
 ################################################################################
 ################################################################################
@@ -787,7 +826,10 @@ logstr= \
 "           Multi-segment gapped alignments: " + str(gapmcount) + '\n' + \
 "        Other chimeric (different str/chr): " + str(rricount) + '\n' + \
 "          Overlapping chimeric (homotypic): " + str(homocount) + '\n' + \
-"                            Bad alignments: " + str(badcount) + '\n'
+"                            Bad alignments: " + str(badcount) + '\n' + \
+"                 Non-Continuous alignments: " + str(noncontinuous_count) + '\n' + \
+"                      non-continuous reads: " + str(readcount) + '\n'
+
 logfile.write(logstr); print logstr
 logfile.close()
 

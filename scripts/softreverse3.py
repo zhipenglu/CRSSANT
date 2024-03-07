@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 softreverse.py
 Zhipeng Lu, zhipengluchina@gmail.com
@@ -33,44 +34,71 @@ not need to make a specific
 
 What is the best approach? The ACTB region
 
+Jessica Severin: July 2023, modified this code to use the pysam toolkit to 
+  allow reading of both BAM and SAM files to avoid the BAM->SAM conversion 
+  step in the workflow.  https://pysam.readthedocs.io/en/latest/api.html
 
 """
 
 import sys
 import re
-
+import pysam
 
 
 if len(sys.argv) < 3:
-    print("Usage: python softreverse.py insam outfastq")
+    print("Usage: python3 softreverse.py insam outfastq")
+    sys.exit()
+
+infile = sys.argv[1]
+outfile = sys.argv[2]
+insam = None
+
+if(infile.endswith("sam")):
+    print(infile," is SAM")
+    insam = pysam.AlignmentFile(infile, "r", require_index=False)
+if(infile.endswith(".bam")):
+    print(infile, " is BAM")
+    insam = pysam.AlignmentFile(infile, "rb", require_index=False)
+
+if(insam is None):
+    print("Usage: python3 softreverse.py insam outfastq : must use .sam or .bam input file")
     sys.exit()
 
 minlen = 5 #minimal length of the softclipped shorter segment
-insam = open(sys.argv[1], 'r')
 outfastq = open(sys.argv[2], 'w')
 
-for line in insam:
-    if line[0] == '@': continue
+cond1_count = 0
+cond2_count = 0
+cond3_count = 0
+total_count = 0
+
+for align in insam:
+    total_count+=1
+    line = align.to_string()
     record = line.split()
-    FLAG = int(record[1])
-    if FLAG>=256 and bin(FLAG)[-9]=='1' or \
-       len(record)>=21 and "SA:Z" in line.split()[20]:
+    FLAG = align.flag
+    #if (FLAG>=256 and bin(FLAG)[-9]=='1') or (len(record)>=21 and "SA:Z" in record[20]):
+    if (FLAG>=256 and bin(FLAG)[-9]=='1') or (align.has_tag('SA')):
         continue #ignore secondary (FLAG=256) and chiastic alignments (SA:Z). 
-    CIGAR = line.split()[5]
+    CIGAR = align.cigarstring
     subMS = re.findall('\d+[MS]', CIGAR) #substrings for M and S
     softs = re.findall('\d+S', CIGAR)
     softslen = [int(i[:-1]) for i in softs]
     if softslen and max(softslen) >= minlen:
-        record = line.split()
-        QNAME, SEQ, QUAL = record[0], record[9], record[10]
+        QNAME = align.query_name
+        SEQ   = align.query_sequence
+        QUAL  = align.qual
         #print(CIGAR, SEQ)
         if 'S' in subMS[0] and 'S' not in subMS[-1]:
+            cond1_count+=1
             SEQ = SEQ[softslen[0]:] + SEQ[:softslen[0]]
             QUAL = QUAL[softslen[0]:] + QUAL[:softslen[0]]
         elif 'S' not in subMS[0] and 'S' in subMS[-1]:
+            cond2_count+=1
             SEQ = SEQ[-softslen[0]:] + SEQ[:-softslen[0]]
             QUAL = QUAL[-softslen[0]:] + QUAL[:-softslen[0]]
         elif 'S' in subMS[0] and 'S' in subMS[-1]:
+            cond3_count+=1
             SEQ = SEQ[-softslen[1]:] + \
                   SEQ[softslen[0]:-softslen[1]] + SEQ[:softslen[0]] 
             QUAL = QUAL[-softslen[1]:] + \
@@ -81,12 +109,7 @@ for line in insam:
 insam.close()
 outfastq.close()
 
-
-
-
-
-
-
-
-
-
+print("total count: ", total_count)
+print("cond1 counts: ", cond1_count)
+print("cond2 counts: ", cond2_count)
+print("cond3 counts: ", cond3_count)
